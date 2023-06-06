@@ -1,0 +1,58 @@
+                    OBJETIVO PRINCIPAL
+
+O objetivo deste trabalho é implementar o programa vina++, que 
+consiste de um arquivador básico (archiver), isto é, um programa 
+que salva em sequência uma coleção de arquivos (denominados 
+membros) dentro de outro arquivo (denominado archive) cuja 
+estrutura permite recuperar os arquivos originais 
+individualmente.
+
+Os programas tar, zip, rar e arj são arquivadores populares. 
+Além de arquivar arquivos, a maioria deles também comprime os 
+dados dos mesmos, para ocupar menos espaço de armazenamento. 
+Para simplificar, o arquivador VINA++ não comprime os arquivos, 
+apenas os armazena.
+
+
+                    EXECUÇÃO DO PROGRAMA
+O pacote de software a ser construído deve gerar o executável chamado vina++, que deve ser executado da seguinte forma:
+
+    vina++ <opção> <archive> [membro1 membro2 ...]
+
+Onde a opção pode ser:
+
+    -i : insere/acrescenta um ou mais membros ao archive. Caso o membro já exista no archive, ele deve ser substituído. Novos membros são inseridos respeitando a ordem da linha de comando, ao final do archive;
+
+    -a : mesmo comportamento da opção -i, mas a substituição de um membro existente ocorre APENAS caso o parâmetro seja mais recente que o arquivado;
+
+    -m target : move o membro indicado na linha de comando para imediatamente depois do membro target existente em archive. A movimentação deve ocorrer na seção de dados do archive;
+
+    -x : extrai os membros indicados de archive. Se os membros não forem indicados, todos devem ser extraídos. A extração consiste em ler o membro de archive e criar um arquivo correspondente, com conteúdo idêntico, em disco;
+
+    -r : remove os membros indicados de archive;
+
+    -c : lista o conteúdo de archive em ordem, incluindo as propriedades de cada membro (nome, UID, permissões, tamanho e data de modificação) e sua ordem no arquivo. A saída esperada é igual ao do comando tar com as opções tvf
+
+    -h : imprime uma pequena mensagem de ajuda com as opções disponíveis e encerra.
+
+Caso sejam indicados nomes de arquivos com caminhos absolutos ou relativos, deve-se arquivar estes nomes SEMPRE com caminhos relativos. Por exemplo, se for indicado o arquivo /home/inf/xyz00/texto.doc, deve ser colocado no arquivo vpp como ./home/inf/xyz00/texto.doc.
+
+Ao extrair um membro, toda a hierarquia de diretórios contidos no nome do arquivo deve ser criada (caso não existam).
+
+                    FORMATO DO ARQUIVO
+
+    O início ou final do archive (.vpp) deve ter uma área de diretório, como mostra a figura
+
+    Todas as informações sobre os membros, necessárias para a manipulação do archive, devem estar armazenadas única e exclusivamente na área de diretório. A parte restante deve conter apenas os dados dos membros.
+
+    Para cada membro, devem ser armazenadas as seguintes informações: nome (sem espaços), UID (user ID), permissões, tamanho, data de modificação, ordem no arquivo e localização.
+
+    A ordem de um membro no arquivo é dada pela ordem de inserção, e pode ser alterada pela opção -m.
+
+    O conteúdo da área de diretório pode ser manipulado em memória RAM ou em disco, a critério do aluno.
+
+    O conteúdo dos membros do archive deve ser manipulado diretamente em disco, não sendo permitida a alocação de mais de 1.024 bytes de memória para manipulação dos conteúdos dos membros.
+
+                        ERROS
+Em caso de erros, uma mensagem explicando o ocorrido deve ser impressa em stderr e a execução do programa deve ser encerrada com código de saída diferente de 0. Caso o programa possa recuperar-se automaticamente do erro, deve fazê-lo.
+
