@@ -14,8 +14,12 @@ int main(int argc, char *argv[]) {
     char *nome_arquivo = argv[1];
 
     // Outras variáveis necessárias
-    Archive archive;
     int opcao;
+    Archive* archive;
+
+    size_t size = sizeof(**argv) / sizeof(*argv[0]);
+  
+    printf("The length of the array is %d \n", size);
 
     // Opções do usuário
     printf("Selecione uma opção:\n");
@@ -37,10 +41,10 @@ int main(int argc, char *argv[]) {
 
     switch (opcao) {
         case 1:
-            // Chamar a função inicializar_archive
+            archive = inicializar_archive(nome_arquivo);
             break;
         case 2:
-            // Chamar a função adicionar_membro
+            adicionar_membro(archive, argv[3], argv[2]);
             break;
         case 3:
             // Chamar a função substituir_membro

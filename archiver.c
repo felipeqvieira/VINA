@@ -23,10 +23,19 @@ void inicializar_membro(Membro** membro, const char* nome) {
     (*membro)->localizacao = 0;
 }
 
-void inicializar_archive(Archive * archive){
+Archive * inicializar_archive(const char* nome_arquivo){
    
-    archive->num_membros = 0;
+    Archive* novo_archive = (Archive*)malloc(sizeof(Archive));
 
+    if(novo_archive == NULL){
+        perror("Erro ao alocar memória para o Archive");
+        return NULL;
+    }
+
+    strcpy(novo_archive->nome_archive, nome_arquivo);
+    novo_archive->num_membros = 0;
+
+    return novo_archive;
 }
 
 void preencher_dados_membro(Membro* membro, const char* nome_arquivo){

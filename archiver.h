@@ -8,6 +8,7 @@
 #define ERRO_FTELL -4
 #define QUANTIDADE_MAXIMA 1000 // quantidade maxima de arquivos no diretorio
 #define BUFFER_SIZE 1024
+#define MAX_NOME_ARCHIVE 1024
 
 typedef struct { 
 
@@ -24,6 +25,7 @@ typedef struct {
 typedef struct {
     Membro* membros[QUANTIDADE_MAXIMA];
     int num_membros;
+    char nome_archive[MAX_NOME_ARCHIVE];
 } Archive;
 
 typedef struct {
@@ -34,7 +36,7 @@ typedef struct {
 
 void inicializar_membro(Membro** membro, const char* nome);
 
-void inicializar_archive(Archive * archive);
+Archive* inicializar_archive(const char* nome_arquivo);
 
 void preencher_dados_membro(Membro* membro, const char* nome_arquivo);
 
