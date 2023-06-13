@@ -273,10 +273,10 @@ void substituir_membro(Archive* archive, int indice_membro, const char* nome_nov
     archive->membros[indice_membro] = membro_substituto;
 
     // Atualizar o diretório do arquivo
-    atualizar_diretorio(archive->nome_arquivo, archive);
+    atualizar_diretorio(archive->nome_archive, archive);
 
     // Abrir o arquivo de destino em modo de escrita binária
-    FILE* arquivo_destino = fopen(archive->nome_arquivo, "r+b");
+    FILE* arquivo_destino = fopen(archive->nome_archive, "r+b");
     if (arquivo_destino == NULL) {
         perror("Erro ao abrir o arquivo de destino");
         fclose(novo_membro);
@@ -427,7 +427,7 @@ void escrever_arquivo_archive(Archive* archive) {
     fclose(arquivo);
 }
 
-int mover_membro(Archive *archive, const char* membro_frente, const char* membro_atras){
+int mover_membro(Archive *archive, const char *nome_archive, const char* membro_frente, const char* membro_atras){
 
     FILE* arquivo_destino = fopen(membro_atras,"rb");
 
@@ -467,7 +467,7 @@ int mover_membro(Archive *archive, const char* membro_frente, const char* membro
 
     atualizar_diretorio(archive,arquivo_destino);
 
-    escrever_arquivo_archive(archive);
+    escrever_arquivo_archive(archive, nome_archive);
 
     fclose(arquivo_destino);
     fclose(arquivo_movido);
