@@ -234,9 +234,6 @@ void adicionar_membro(Archive* archive, const char* nome_membro, const char* nom
 }
 */
 
-Peço desculpas novamente pelo erro. Aqui está a versão corrigida da função `substituir_membro` que chama a função `atualizar_diretorio` com os argumentos corretos:
-
-```cpp
 void substituir_membro(Archive* archive, int indice_membro, const char* nome_novo_membro) {
     // Verificar se o índice do membro está dentro dos limites válidos
     if (indice_membro < 0 || indice_membro >= archive->num_membros) {
