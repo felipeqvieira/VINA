@@ -40,7 +40,7 @@ void preencher_dados_membro(Membro* membro, const char* nome_arquivo);
 
 void adicionar_membro(Archive* archive, const char* nome_membro, const char* nome_arquivo_destino);
 
-void substituir_membro(Membro* novo_membro, int indice_existente, Membro* membro_existente);
+void substituir_membro(Archive* archive, int indice_membro, const char* nome_novo_membro, const char* nome_arquivo_destino);
 
 int encontrar_nome (Archive* archive, const char* nome_membro);
 

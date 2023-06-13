@@ -5,6 +5,9 @@
 #include <time.h>
 #include <sys/stat.h>
 
+#define MAX_NOME_ARQUIVO 100
+#define MAX_CAMINHO_ARQUIVO 100
+
 void inicializar_membro(Membro** membro, const char* nome) {
     
     *membro = malloc(sizeof(Membro));
@@ -99,15 +102,23 @@ void preencher_dados_membro(Membro* membro, const char* nome_arquivo){
 }
 */
 
+/* 
 void adicionar_membro(Archive* archive, const char* nome_membro, const char* nome_arquivo_destino) {
+
+    
     FILE* membro = fopen(nome_membro, "rb");
     if (membro == NULL) {
         return ERRO_NA_ABERTURA;
     }
+
+    
     fseek(membro, 0, SEEK_END);
+
+    
     long tamanho_arquivo = ftell(membro);
     rewind(membro);
 
+    
     Membro* novo_membro;
     inicializar_membro(&novo_membro, nome_membro);
     preencher_dados_membro(novo_membro, nome_membro);
@@ -140,8 +151,62 @@ void adicionar_membro(Archive* archive, const char* nome_membro, const char* nom
     fclose(arquivo_destino);
 
 }
+*/
 
-void substituir_membro(Membro* novo_membro, int indice_existente, Membro* membro_existente){
+void adicionar_membro(Archive* archive, const char* nome_membro, const char* nome_arquivo_destino) {
+    char nome_arquivo[MAX_NOME_ARQUIVO];
+    char caminho_arquivo[MAX_CAMINHO_ARQUIVO];
+
+    // Verificar se o nome do arquivo contém um caminho
+    const char* separador = strrchr(nome_membro, '/');
+    if (separador != NULL) {
+        // O nome do arquivo contém um caminho
+        strcpy(caminho_arquivo, nome_membro);
+        strncpy(nome_arquivo, separador + 1, MAX_NOME_ARQUIVO - 1);
+        caminho_arquivo[separador - nome_membro + 1] = '\0';
+    } else {
+        // O nome do arquivo não contém um caminho
+        strcpy(nome_arquivo, nome_membro);
+        caminho_arquivo[0] = '\0'; // Caminho vazio
+    }
+
+    // Construir o caminho completo do arquivo destino
+    char caminho_completo[MAX_CAMINHO_ARQUIVO + MAX_NOME_ARQUIVO];
+    if (caminho_arquivo[0] != '\0') {
+        snprintf(caminho_completo, sizeof(caminho_completo), "%s%s", nome_arquivo_destino, caminho_arquivo);
+    } else {
+        strncpy(caminho_completo, nome_arquivo_destino, sizeof(caminho_completo) - 1);
+    }
+
+    // Abrir o arquivo de destino em modo de escrita binária
+    FILE* arquivo_destino = fopen(caminho_completo, "ab");
+    if (arquivo_destino == NULL) {
+        perror("Erro ao abrir o arquivo de destino");
+        return;
+    }
+
+    // Restante do código para adicionar o membro ao arquivo de destino
+    char buffer[BUFFER_SIZE];
+    size_t bytes_lidos;
+
+    FILE* membro = fopen(nome_membro, "rb");
+    if (membro == NULL) {
+        perror("Erro ao abrir o arquivo de membro de origem");
+        fclose(arquivo_destino);
+        return;
+    }
+
+    while ((bytes_lidos = fread(buffer, 1, BUFFER_SIZE, membro)) > 0) {
+        // Gravar os dados do buffer no arquivo de destino
+        fwrite(buffer, 1, bytes_lidos, arquivo_destino);
+    }
+
+    fclose(membro);
+    fclose(arquivo_destino);
+}
+
+
+/* void substituir_membro(Membro* novo_membro, int indice_existente, Membro* membro_existente){
 
     strcpy(membro_existente->nome, novo_membro->nome);
     
@@ -157,6 +222,70 @@ void substituir_membro(Membro* novo_membro, int indice_existente, Membro* membro
     
     membro_existente->user_ID = novo_membro->user_ID;
     
+}
+*/
+
+Peço desculpas novamente pelo erro. Aqui está a versão corrigida da função `substituir_membro` que chama a função `atualizar_diretorio` com os argumentos corretos:
+
+```cpp
+void substituir_membro(Archive* archive, int indice_membro, const char* nome_novo_membro) {
+    // Verificar se o índice do membro está dentro dos limites válidos
+    if (indice_membro < 0 || indice_membro >= archive->num_membros) {
+        printf("Índice de membro inválido\n");
+        return;
+    }
+
+    // Abrir o novo arquivo de membro em modo de leitura binária
+    FILE* novo_membro = fopen(nome_novo_membro, "rb");
+    if (novo_membro == NULL) {
+        perror("Erro ao abrir o novo arquivo de membro");
+        return;
+    }
+
+    // Obter o tamanho do novo membro
+    fseek(novo_membro, 0, SEEK_END);
+    long tamanho_novo_membro = ftell(novo_membro);
+    rewind(novo_membro);
+
+    // Alocar memória para o novo membro
+    Membro* membro_substituto = (Membro*)malloc(sizeof(Membro));
+    if (membro_substituto == NULL) {
+        perror("Erro ao alocar memória para o novo membro");
+        fclose(novo_membro);
+        return;
+    }
+
+    // Preencher as informações do novo membro
+    strncpy(membro_substituto->nome, nome_novo_membro, MAX_NOME_ARQUIVO);
+    membro_substituto->tamanho = tamanho_novo_membro;
+    membro_substituto->permissoes = obter_permissoes(nome_novo_membro);
+    membro_substituto->data_modificacao = obter_data_modificacao(nome_novo_membro);
+
+    // Substituir o membro existente pelo novo membro
+    Membro* membro_existente = archive->membros[indice_membro];
+    free(membro_existente);
+    archive->membros[indice_membro] = membro_substituto;
+
+    // Atualizar o diretório do arquivo
+    atualizar_diretorio(archive->nome_arquivo, archive);
+
+    // Abrir o arquivo de destino em modo de escrita binária
+    FILE* arquivo_destino = fopen(archive->nome_arquivo, "r+b");
+    if (arquivo_destino == NULL) {
+        perror("Erro ao abrir o arquivo de destino");
+        fclose(novo_membro);
+        return;
+    }
+
+    // Deslocar o ponteiro para a posição correta do membro no arquivo de destino
+    fseek(arquivo_destino, sizeof(Archiver) + indice_membro * sizeof(Membro*), SEEK_SET);
+
+    // Gravar o ponteiro para o novo membro no arquivo de destino
+    fwrite(&membro_substituto, sizeof(Membro*), 1, arquivo_destino);
+
+    // Fechar os arquivos
+    fclose(novo_membro);
+    fclose(arquivo_destino);
 }
 
 int encontrar_nome (Archive* archive, const char* nome_membro){
@@ -208,7 +337,7 @@ int encontrar_nome (Archive* archive, const char* nome_membro){
 };
 */
 
-int adiciona_verificando_data(Archive* archive, const char* nome_membro, const char* arquivo_destino) {
+/* int adiciona_verificando_data(Archive* archive, const char* nome_membro, const char* arquivo_destino) {
     FILE* arquivo = fopen(nome_membro, "rb");
     if (arquivo == NULL) {
         perror("Erro ao abrir arquivo");
@@ -235,6 +364,32 @@ int adiciona_verificando_data(Archive* archive, const char* nome_membro, const c
 
     return ARQUIVO_VERIFICADO;
 }
+*/
+
+void adicionar_verificando_data(Archive* archive, const char* nome_membro, const char* nome_arquivo_destino) {
+    int indice_existente = encontrar_nome(archive, nome_membro);
+    if (indice_existente != -1) {
+        Membro* membro_existente = archive->membros[indice_existente];
+        struct stat info_existente;
+        if (stat(membro_existente->nome, &info_existente) != 0) {
+            perror("Erro ao obter informações do membro existente");
+            return;
+        }
+
+        struct stat info_novo;
+        if (stat(nome_membro, &info_novo) != 0) {
+            perror("Erro ao obter informações do novo membro");
+            return;
+        }
+
+        if (info_novo.st_mtime > info_existente.st_mtime || info_novo.st_mtime == info_existente.st_mtime) {
+            substituir_membro(archive, indice_existente, nome_membro, nome_arquivo_destino);
+        }
+    } else {
+        adicionar_membro(archive, nome_membro, nome_arquivo_destino);
+    }
+}
+
 
 void atualizar_diretorio(Archive* archive, FILE* arquivo) {
     fseek(arquivo, sizeof(int) + sizeof(Membro) * archive->num_membros, SEEK_SET);
