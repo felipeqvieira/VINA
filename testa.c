@@ -426,40 +426,38 @@ int main(int argc, char *argv[]) {
     printf("Opção: ");
     scanf("%d", &opcao);
 
-    while(opcao != 0){
 
-        switch (opcao) {
-            case 1:
-                adicionar_membro(archive, argv[3], argv[2]);
-                break;
-            case 2:
-                adiciona_verificando_data(archive, argv[3], argv[2]);
-                break;
-            case 3:
-                mover_membro(archive, argv[2], argv[3], argv[4]);
-                break;
-            case 4:
+    switch (opcao) {
+        case 1:
+            adicionar_membro(archive, argv[3], argv[2]);
+            break;
+        case 2:
+            adiciona_verificando_data(archive, argv[3], argv[2]);
+            break;
+        case 3:
+            mover_membro(archive, argv[2], argv[3], argv[4]);
+            break;
+        case 4:
             extrair_membros(archive, argv[2]);
-                break;
-            case 5:
-                listar_conteudo(argv[2]);
-                break;
-            case 6:
-                remover_membro(argv[2], argv[3]);
-                break;
-            case 7:
-                exibir_ajuda();
-                break;
-            case 0:
-                return 1;
-                break;
-            default:
-                printf("Opção inválida.\n");
-                break;
-        }
-
-        printf("Opção: ");
-        scanf("%d", &opcao);
-
+            break;
+        case 5:
+            listar_conteudo(argv[2]);
+            break;
+        case 6:
+            remover_membro(argv[2], argv[3]);
+            break;
+        case 7:
+            exibir_ajuda();
+            break;
+        case 0:
+            return 1;
+            break;
+        default:
+            printf("Opção inválida.\n");
+            break;
     }
+
+    printf("Opção: ");
+    scanf("%d", &opcao);
+
 }
