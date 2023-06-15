@@ -7,6 +7,7 @@
 #define QUANTIDADE_MAXIMA 1000
 #define MAX_NOME_ARCHIVE 100
 #define MAX_NOME 100
+#define MAX_CONTEUDO 1000000
 
 typedef struct { 
     char nome[MAX_NOME];
@@ -21,15 +22,18 @@ typedef struct {
 typedef struct {
     Membro membros[QUANTIDADE_MAXIMA];
     int num_membros;
-    char nome_archive[MAX_NOME_ARCHIVE];
-    Diretorio* diretorio;
-} Archive;
+} Diretorio;
 
 typedef struct {
-    Membro membros[QUANTIDADE_MAXIMA];
-    int num_membros;
+    unsigned char conteudo[MAX_CONTEUDO];
+} ConteudoMembro;
+
+
+typedef struct {
+    Diretorio diretorio;
+    ConteudoMembro conteudo;
     char nome_archive[MAX_NOME_ARCHIVE];
-} Diretorio;
+} Archive;
 
 typedef struct {
     Archive Archive;
