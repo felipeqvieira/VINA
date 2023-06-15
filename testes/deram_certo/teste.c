@@ -100,55 +100,42 @@ void verificar_conteudo_membro(const char *nome_arquivo, const ConteudoMembro *c
 }
 
 ArchiveData* inicializar_archive(const char *nome_archive) {
+
+    if (arquivo_existe(nome_archive) != 0) {
+        printf("O arquivo '%s' já existe.\n", nome_archive);
+        return NULL;
+    }
+
+    printf("O arquivo '%s' nao existe.\n", nome_archive);
+
     ArchiveData* archiveData = malloc(sizeof(ArchiveData));
     if (archiveData == NULL) {
         printf("Erro ao alocar memória para o ArchiveData.\n");
         return NULL;
     }
 
-    // Verifica se o arquivo já existe
-    if (arquivo_existe(nome_archive)) {
-        printf("O arquivo '%s' já existe.\n", nome_archive);
+    strcpy(archiveData->nome_archive, nome_archive);
+    archiveData->diretorio.num_membros = 0;
 
-        // Abrir o arquivo em modo de leitura binária
-        FILE *arquivo = fopen(nome_archive, "rb");
-        if (arquivo == NULL) {
-            printf("Erro ao abrir o arquivo.\n");
-            free(archiveData);
-            return NULL;
-        }
-
-        // Ler os dados do arquivo para preencher a estrutura ArchiveData
-        fread(archiveData, sizeof(ArchiveData), 1, arquivo);
-
-        fclose(arquivo);
-    } else {
-        printf("O arquivo '%s' não existe.\n", nome_archive);
-
-        strcpy(archiveData->nome_archive, nome_archive);
-        archiveData->diretorio.num_membros = 0;
-
-        FILE *arquivo = fopen(nome_archive, "wb");
-        if (arquivo == NULL) {
-            printf("Erro ao abrir o arquivo.\n");
-            free(archiveData);
-            return NULL;
-        }
-
-        // Define a posição inicial do arquivo
-        fseek(arquivo, 0, SEEK_SET);
-
-        // Escreve a estrutura ArchiveData no arquivo
-        fwrite(archiveData, sizeof(ArchiveData), 1, arquivo);
-
-        fclose(arquivo);
-
-        printf("ArchiveData '%s' criado com sucesso!\n", nome_archive);
+    FILE *arquivo = fopen(nome_archive, "wb");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+        free(archiveData);
+        return NULL;
     }
+
+    // Define a posição inicial do arquivo
+    fseek(arquivo, 0, SEEK_SET);
+
+    // Escreve a estrutura ArchiveData no arquivo
+    fwrite(archiveData, sizeof(ArchiveData), 1, arquivo);
+
+    fclose(arquivo);
+
+    printf("ArchiveData '%s' criado com sucesso!\n", nome_archive);
 
     return archiveData;
 }
-
 
 int verifica_nome(const ArchiveData *archiveData, const char *nome_arquivo) {
     for (int i = 0; i < archiveData->diretorio.num_membros; i++) {
@@ -198,6 +185,9 @@ void inserir_membros(Archiver *archiver, const char *nome_membro) {
         printf("O membro '%s' já existe no ArchiveData.\n", nome_membro);
         return;
     }
+
+    printf("oi\n");
+
 
     // Verifica se há espaço disponível no diretório
     if (archiver->archiveData.diretorio.num_membros >= QUANTIDADE_MAXIMA) {
@@ -265,6 +255,7 @@ int main() {
     listar_membros(&(archiver->archiveData));
 
     free(archiver);
+    
     
     return 0;
 }
