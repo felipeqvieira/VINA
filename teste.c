@@ -1,12 +1,15 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <time.h>
+#include <stdlib.h>
+#include <string.h>
 
+#define MAX_NOME_ARCHIVE 100
+#define QUANTIDADE_MAXIMA 1000
 #define MAX_NOME 100
+#define MAX_CONTEUDO 1000000
 
 typedef struct {
     char nome[MAX_NOME];
@@ -14,56 +17,77 @@ typedef struct {
     int permissoes;
     long tamanho;
     time_t data_modificacao;
+    int ordem;
+    long localizacao;
 } Membro;
 
-void preencher_dados_membro(Membro *membro, const char *nome_arquivo) {
-    struct stat info_arquivo;
+typedef struct {
+    Membro membros[QUANTIDADE_MAXIMA];
+    int num_membros;
+} Diretorio;
 
-    if (stat(nome_arquivo, &info_arquivo) == -1) {
-        perror("Erro ao obter informações do arquivo");
-        return;
+typedef struct {
+    unsigned char conteudo[MAX_CONTEUDO];
+} ConteudoMembro;
+
+typedef struct {
+    Diretorio diretorio;
+    ConteudoMembro conteudo;
+    char nome_archive[MAX_NOME_ARCHIVE];
+} ArchiveData;
+
+typedef struct {
+    ArchiveData archiveData;
+} Archiver;
+
+// Verifica se o archive existe.
+int arquivo_existe(const char *nome_arquivo) {
+    FILE *arquivo = fopen(nome_arquivo, "rb");
+    if (arquivo == NULL) {
+        return 0;  // Arquivo não existe
     }
-
-    // Extrair informações do arquivo e preencher a estrutura Membro
-    char nome_limpo[MAX_NOME];
-    const char *nome_com_espacos = nome_arquivo;
-    char *ponteiro_espaco;
-
-    // Remover espaços extras no início do nome
-    while (*nome_com_espacos == ' ') {
-        nome_com_espacos++;
-    }
-
-    // Copiar o nome sem espaços extras
-    strcpy(nome_limpo, nome_com_espacos);
-
-    // Remover espaços extras no final do nome
-    ponteiro_espaco = nome_limpo + strlen(nome_limpo) - 1;
-    while (ponteiro_espaco > nome_limpo && *ponteiro_espaco == ' ') {
-        *ponteiro_espaco = '\0';
-        ponteiro_espaco--;
-    }
-
-    // Preencher a estrutura Membro
-    strcpy(membro->nome, nome_limpo);
-    membro->user_ID = info_arquivo.st_uid;
-    membro->permissoes = info_arquivo.st_mode & 0777;
-    membro->tamanho = info_arquivo.st_size;
-    membro->data_modificacao = info_arquivo.st_mtime;
+    fclose(arquivo);
+    return 1;  // Arquivo existe
 }
 
-int main() {
-    const char *nome_arquivo = "arquivo com espacos.txt";
+ArchiveData* inicializar_archive(const char *nome_archive) {
 
-    Membro membro;
-    preencher_dados_membro(&membro, nome_arquivo);
+    if (arquivo_existe(nome_archive) != 0) {
+        printf("O arquivo '%s' já existe.\n", nome_archive);
+        return NULL;
+    }
 
-    printf("Informações do arquivo:\n");
-    printf("Nome: %s\n", membro.nome);
-    printf("User ID: %d\n", membro.user_ID);
-    printf("Permissões: %o\n", membro.permissoes);
-    printf("Tamanho: %ld bytes\n", membro.tamanho);
-    printf("Data de modificação: %s", ctime(&membro.data_modificacao));
+    ArchiveData* archiveData = malloc(sizeof(ArchiveData));
 
-    return 0;
+    if (archiveData == NULL) {
+        printf("Erro ao alocar memória para o ArchiveData.\n");
+        return NULL;
+    }
+    
+    strcpy(archiveData->nome_archive, nome_archive);
+    archiveData->diretorio.num_membros = 0;
+
+    FILE *arquivo = fopen(nome_archive, "wb");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+        free(archiveData);
+        return NULL;
+    }
+
+    fwrite(archiveData, sizeof(ArchiveData), 1, arquivo);
+    fclose(arquivo);
+
+    printf("ArchiveData '%s' criado com sucesso!\n", nome_archive);
+
+    return archiveData;
+}
+
+
+int main(){
+
+    Archiver *archiver = malloc(sizeof(Archiver));
+
+    archiver->archiveData = *inicializar_archive("felipe.vpp");
+    
+    return 1;
 }
