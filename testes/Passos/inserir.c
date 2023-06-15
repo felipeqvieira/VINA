@@ -1,6 +1,7 @@
 #include "archiver.h"
 
 void inserir_membros(Archive *archive, const char *nome_membro) {
+    
     // Verifica se o arquivo já existe no Archive
     if (verifica_nome(archive, nome_membro)) {
         printf("O membro '%s' já existe no Archive.\n", nome_membro);
