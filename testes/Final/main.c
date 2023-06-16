@@ -58,8 +58,9 @@ int main(int argc, char *argv[]) {
     if (strcmp(opcao, "-i") == 0) {
         inserir_membros(archive, membros, num_membros);
     } else if (strcmp(opcao, "-a") == 0) {
-        atualizar_membros(archive, membros);
-    } else if (strcmp(opcao, "-m") == 0) {
+        inserir_data(archive, membros, num_membros);
+    
+    } /*else if (strcmp(opcao, "-m") == 0) {
         mover_membro(archive, membros);
     } else if (strcmp(opcao, "-x") == 0) {
         extrair_membros(archive, membros);
@@ -73,6 +74,7 @@ int main(int argc, char *argv[]) {
         printf("Opção inválida.\n");
         exibir_ajuda();
     }
+    */
 
     return 0;
 }

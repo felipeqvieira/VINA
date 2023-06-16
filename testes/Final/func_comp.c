@@ -149,3 +149,42 @@ void extrair_informacoes_membro(const char *nome_arquivo, Membro *membro) {
     membro->ordem = 0; // Defina o valor adequado para a ordem do membro
     membro->localizacao = 0; // Defina o valor adequado para a localização do membro
 }
+
+int contar_membros(char **membros) {
+    int contador = 0;
+    while (membros[contador] != NULL) {
+        contador++;
+    }
+    return contador;
+}
+
+int verificar_tempo_modificacao_mais_recente(const char* nome_membro, Membro* membro_existente) {
+    struct stat arquivo_stat;
+    if (stat(nome_membro, &arquivo_stat) != 0) {
+        // Erro ao obter informações do arquivo
+        return 0;
+    }
+
+    // Verificar se o tempo de modificação do novo membro é mais recente
+    if (arquivo_stat.st_mtime > membro_existente->data_modificacao) {
+        return 1;
+    }
+
+    return 0;
+}
+
+void substituir_recente(Archiver* archiver, int posicao_existente, Membro* novo_membro, unsigned char* conteudo, long tamanho_conteudo) {
+    // Substituir o membro existente na posição especificada pelo novo membro
+    Membro* membro_existente = &(archiver->archiveData.diretorio.membros[posicao_existente]);
+    strcpy(membro_existente->nome, novo_membro->nome);
+    membro_existente->user_ID = novo_membro->user_ID;
+    membro_existente->permissoes = novo_membro->permissoes;
+    membro_existente->tamanho = novo_membro->tamanho;
+    membro_existente->data_modificacao = novo_membro->data_modificacao;
+    membro_existente->ordem = novo_membro->ordem;
+    membro_existente->localizacao = novo_membro->localizacao;
+
+    // Atualizar o conteúdo do arquivo
+    memcpy(archiver->archiveData.conteudo.conteudo, conteudo, tamanho_conteudo);
+}
+
