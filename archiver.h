@@ -1,16 +1,17 @@
 #include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <time.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 
 #define MAX_NOME_ARCHIVE 100
 #define QUANTIDADE_MAXIMA 1000
-#define MAX_NOME_ARCHIVE 100
 #define MAX_NOME 100
 #define MAX_CONTEUDO 1000000
-#define BUFFER_SIZE 1024
 
-typedef struct { 
+typedef struct {
     char nome[MAX_NOME];
     int user_ID;
     int permissoes;
@@ -29,13 +30,12 @@ typedef struct {
     unsigned char conteudo[MAX_CONTEUDO];
 } ConteudoMembro;
 
-
 typedef struct {
     Diretorio diretorio;
     ConteudoMembro conteudo;
     char nome_archive[MAX_NOME_ARCHIVE];
-} Archive;
+} ArchiveData;
 
 typedef struct {
-    Archive Archive;
+    ArchiveData archiveData;
 } Archiver;
