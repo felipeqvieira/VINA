@@ -1,6 +1,7 @@
 #include "archiver.h"
 #include "func_comp.h"
 #include "inserir.h"
+#include "extrair.h"
 
 int main(int argc, char *argv[]) {
     // Verificar se foram fornecidos argumentos suficientes
