@@ -27,13 +27,7 @@ typedef struct {
 } Diretorio;
 
 typedef struct {
-    unsigned char conteudo[MAX_CONTEUDO];
-} ConteudoMembro;
-
-typedef struct {
     Diretorio diretorio;
-    ConteudoMembro conteudo;
-    char nome_archive[MAX_NOME_ARCHIVE];
 } ArchiveData;
 
 typedef struct {

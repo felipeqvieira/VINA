@@ -58,10 +58,10 @@ int main(int argc, char *argv[]) {
     // Encaminhar para a função apropriada de acordo com a opção
     if (strcmp(opcao, "-i") == 0) {
         inserir_membros(archive, membros, num_membros);
-    } else if (strcmp(opcao, "-a") == 0) {
+    }/* else if (strcmp(opcao, "-a") == 0) {
         inserir_data(archive, membros, num_membros);
     
-    } /*else if (strcmp(opcao, "-m") == 0) {
+    } else if (strcmp(opcao, "-m") == 0) {
         mover_membro(archive, membros);
     } else if (strcmp(opcao, "-x") == 0) {
         extrair_membros(archive, membros);

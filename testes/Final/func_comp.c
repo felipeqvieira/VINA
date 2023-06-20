@@ -21,42 +21,21 @@ int arquivo_existe(const char *nome_arquivo) {
     return 1;  // Arquivo existe
 }
 
-void verificar_conteudo_membro(const char *nome_arquivo, const ConteudoMembro *conteudo_membro, size_t tamanho_arquivo) {
-    // Abre o arquivo original em modo de leitura binária
-    FILE *arquivo_original = fopen(nome_arquivo, "rb");
-    if (arquivo_original == NULL) {
-        printf("Erro ao abrir o arquivo original '%s' para verificação.\n", nome_arquivo);
-        return;
+void verificar_conteudo_membro(const char *nome_membro, ArchiveData *archiveData, size_t tamanho) {
+    
+    for (int i = 0; i < archiveData->diretorio.num_membros; i++) {
+        Membro *membro = &(archiveData->diretorio.membros[i]);
+        if (strcmp(membro->nome, nome_membro) == 0) {
+            if (membro->tamanho == tamanho) {
+                printf("O conteúdo do membro '%s' foi copiado corretamente.\n", nome_membro);
+            } else {
+                printf("O tamanho do conteúdo do membro '%s' não corresponde ao tamanho original.\n", nome_membro);
+            }
+            return;
+        }
     }
 
-    // Lê o conteúdo do arquivo original
-    unsigned char *conteudo_original = malloc(sizeof(unsigned char) * tamanho_arquivo);
-    if (conteudo_original == NULL) {
-        printf("Erro ao alocar memória para o conteúdo original do arquivo '%s'.\n", nome_arquivo);
-        fclose(arquivo_original);
-        return;
-    }
-
-    size_t bytes_lidos_original = fread(conteudo_original, sizeof(unsigned char), tamanho_arquivo, arquivo_original);
-    if (bytes_lidos_original != tamanho_arquivo) {
-        printf("Erro ao ler o conteúdo do arquivo original '%s' para verificação.\n", nome_arquivo);
-        fclose(arquivo_original);
-        free(conteudo_original);
-        return;
-    }
-
-    // Fecha o arquivo original
-    fclose(arquivo_original);
-
-    // Compara o conteúdo do arquivo original com o conteúdo armazenado na estrutura ConteudoMembro
-    if (memcmp(conteudo_original, conteudo_membro->conteudo, tamanho_arquivo) == 0) {
-        printf("O conteúdo do arquivo '%s' foi armazenado corretamente na estrutura ConteudoMembro.\n", nome_arquivo);
-    } else {
-        printf("Erro: o conteúdo do arquivo '%s' não foi copiado corretamente para a estrutura ConteudoMembro.\n", nome_arquivo);
-    }
-
-    // Libera a memória alocada para o conteúdo original do arquivo
-    free(conteudo_original);
+    printf("O membro '%s' não foi encontrado no ArchiveData.\n", nome_membro);
 }
 
 ArchiveData* inicializar_archive(const char *nome_archive) {
@@ -85,7 +64,6 @@ ArchiveData* inicializar_archive(const char *nome_archive) {
     } else {
         printf("O arquivo '%s' não existe.\n", nome_archive);
 
-        strcpy(archiveData->nome_archive, nome_archive);
         archiveData->diretorio.num_membros = 0;
 
         FILE *arquivo = fopen(nome_archive, "wb");
