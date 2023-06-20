@@ -132,6 +132,29 @@ int verifica_nome(const ArchiveData *archiveData, const char *nome_arquivo) {
     return 0;  // O nome do arquivo não existe no Archive
 }
 
+int verificar_criacao_arquivo(const char *nome_arquivo, long tamanho_esperado) {
+    FILE *arquivo = fopen(nome_arquivo, "rb");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo '%s'.\n", nome_arquivo);
+        return 0;  // Falha na abertura do arquivo
+    }
+
+    // Movendo o cursor para o final do arquivo para obter o tamanho
+    fseek(arquivo, 0, SEEK_END);
+    long tamanho_real = ftell(arquivo);
+
+    fclose(arquivo);
+
+    if (tamanho_real == tamanho_esperado) {
+        printf("O arquivo '%s' foi criado corretamente.\n", nome_arquivo);
+        return 1;  // Arquivo criado corretamente
+    } else {
+        printf("O arquivo '%s' não foi criado corretamente. Tamanho esperado: %ld, Tamanho real: %ld\n",
+               nome_arquivo, tamanho_esperado, tamanho_real);
+        return 0;  // Falha na criação do arquivo
+    }
+}
+
 ArchiveData* inicializar_archive(const char *nome_archive) {
     ArchiveData* archiveData = malloc(sizeof(ArchiveData));
     if (archiveData == NULL) {
@@ -263,6 +286,11 @@ void inserir_membros(Archiver *archiver, char **nomes_arquivos, int num_arquivos
 
         // Fecha o arquivo do membro original
         fclose(arquivo_membro);
+
+        if (verificar_criacao_arquivo(nome_arquivo_archiver, novo_membro.tamanho))
+            printf("ta ok\n");
+        else
+            printf("deu ruim\n");
 
         // Verifica se o conteúdo do arquivo foi copiado corretamente
         verificar_conteudo_membro(nome_arquivo_archiver, &(archiver->archiveData), novo_membro.tamanho);
