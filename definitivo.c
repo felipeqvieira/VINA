@@ -265,6 +265,82 @@ void inserir_membros(Archiver *archiver, char *nome_archive, char **nomes_arquiv
 }
 */
 
+/*
+void extrair_membro(Archiver *archiver, int indice) {
+    if (archiver == NULL) {
+        printf("Erro: Archiver não inicializado.\n");
+        return;
+    }
+
+    if (indice < 0 || indice >= archiver->archiveData.diretorio.num_membros) {
+        printf("Erro: Índice de membro inválido.\n");
+        return;
+    }
+
+    Membro *membro = &(archiver->archiveData.diretorio.membros[indice]);
+
+    // Abrir o arquivo do archive
+    FILE *arquivo_archive = fopen(archiver->archiveData.nome_arquivo, "rb");
+    if (arquivo_archive == NULL) {
+        printf("Erro ao abrir o arquivo archive '%s' para leitura.\n", archiver->archiveData.nome_arquivo);
+        return;
+    }
+
+    // Posicionar o ponteiro do arquivo na posição correta do conteúdo do membro
+    long posicao_conteudo = encontrar_posicao_conteudo(archiver, indice);
+    if (!navegar_para_posicao(arquivo_archive, posicao_conteudo)) {
+        fclose(arquivo_archive);
+        return;
+    }
+
+    // Criar um novo arquivo para armazenar o conteúdo extraído
+    FILE *arquivo_extraido = fopen(membro->nome_arquivo, "wb");
+    if (arquivo_extraido == NULL) {
+        printf("Erro ao criar o arquivo '%s' para escrita.\n", membro->nome_arquivo);
+        fclose(arquivo_archive);
+        return;
+    }
+
+    // Calcular o número de iterações necessárias para ler o conteúdo completo do membro
+    size_t tamanho_conteudo = membro->tamanho;
+    size_t iteracoes = tamanho_conteudo / 1024;
+    size_t resto = tamanho_conteudo % 1024;
+
+    // Ler as porções de 1024 bytes do membro
+    for (size_t i = 0; i < iteracoes; i++) {
+        char buffer[1024];
+        size_t bytes_lidos = fread(buffer, 1, sizeof(buffer), arquivo_archive);
+        if (bytes_lidos == 0) {
+            printf("Erro ao ler o conteúdo do arquivo.\n");
+            break;
+        }
+        size_t bytes_gravados = fwrite(buffer, 1, bytes_lidos, arquivo_extraido);
+        if (bytes_gravados < bytes_lidos) {
+            printf("Erro ao gravar o conteúdo no arquivo extraído.\n");
+            break;
+        }
+    }
+
+    // Ler o resto do conteúdo do membro, se houver
+    if (resto > 0) {
+        char buffer[1024];
+        size_t bytes_lidos = fread(buffer, 1, resto, arquivo_archive);
+        if (bytes_lidos == 0) {
+            printf("Erro ao ler o conteúdo do arquivo.\n");
+        } else {
+            size_t bytes_gravados = fwrite(buffer, 1, bytes_lidos, arquivo_extraido);
+            if (bytes_gravados < bytes_lidos) {
+                printf("Erro ao gravar o conteúdo no arquivo extraído.\n");
+            }
+        }
+    }
+
+    // Fechar os arquivos
+    fclose(arquivo_archive);
+    fclose(arquivo_extraido);
+}
+*/
+
 
 
 int main(int argc, char *argv[]) {
