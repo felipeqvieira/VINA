@@ -38,9 +38,9 @@ typedef struct {
 
 /* MEMBROS*/
 
-int verifica_nome(const ArchiveData *archiveData, const char *nome_arquivo) {
-    for (int i = 0; i < archiveData->diretorio.num_membros; i++) {
-        if (strcmp(nome_arquivo, archiveData->diretorio.membros[i].nome) == 0) {
+int verifica_nome(Archiver *archive, const char *nome_arquivo) {
+    for (int i = 0; i < archive->archiveData.diretorio.num_membros; i++) {
+        if (strcmp(nome_arquivo, archive->archiveData.diretorio.membros[i].nome) == 0) {
             return i;  // O nome do arquivo já existe no Archive
         }
     }
@@ -55,12 +55,12 @@ void listar_membros(const Archiver *archiver) {
     for (int i = 0; i < archiver->archiveData.diretorio.num_membros; i++) {
         const Membro *membro = &(archiver->archiveData.diretorio.membros[i]);
         printf("Nome: %s\n", membro->nome);
-        printf("Usuário ID: %d\n", membro->user_ID);
-        printf("Permissões: %d\n", membro->permissoes);
+        printf("Usuario ID: %d\n", membro->user_ID);
+        printf("Permissoes: %d\n", membro->permissoes);
         printf("Tamanho: %ld\n", membro->tamanho);
-        printf("Data de modificação: %s", ctime(&(membro->data_modificacao)));
+        printf("Data de modificacao: %s", ctime(&(membro->data_modificacao)));
         printf("Ordem: %d\n", membro->ordem);
-        printf("Localização: %ld\n", membro->localizacao);
+        printf("Localizacao: %ld\n", membro->localizacao);
         printf("-----------------------\n");
     }
 }
@@ -117,7 +117,7 @@ void verificar_archive_existente(Archiver *archiver, const char *nome_arquivo) {
     printf("\n----------------------------------\n");
     FILE *arquivo = fopen(nome_arquivo, "r+b");
     if (arquivo == NULL) {
-        printf("O arquivo '%s' não existe. Um novo arquivo será criado.\n", nome_arquivo);
+        printf("O arquivo '%s' nao existe. Um novo arquivo sera criado.\n", nome_arquivo);
 
         // Cria um novo arquivo vazio
         arquivo = fopen(nome_arquivo, "w+b");
@@ -143,7 +143,7 @@ void verificar_archive_existente(Archiver *archiver, const char *nome_arquivo) {
     fread(&(archiver->archiveData.diretorio), sizeof(Diretorio), 1, arquivo);
     fclose(arquivo);
 
-    printf("Archive '%s' encontrado. Diretório carregado com sucesso.\n", nome_arquivo);
+    printf("Archive '%s' encontrado. Diretorio carregado com sucesso.\n", nome_arquivo);
 }
 
 
@@ -232,7 +232,7 @@ void inserir_membros(Archiver *archiver, char *nome_archive, char **nomes_arquiv
 }
 
 
-int substituir_data(Archiver *archiver, const char *nome_arquivo) {
+/*int substituir_data(Archiver *archiver, const char *nome_arquivo) {
 
     int indice_membro = verifica_nome(archiver, nome_arquivo);
 
@@ -244,7 +244,7 @@ int substituir_data(Archiver *archiver, const char *nome_arquivo) {
         struct stat arquivo_stat;
         if (stat(nome_arquivo, &arquivo_stat) != 0) {
             printf("Erro ao obter informações do arquivo '%s'. O arquivo não será substituído.\n", nome_arquivo);
-            return;
+            return -1;
         }
         time_t data_modificacao_arquivo = arquivo_stat.st_mtime;
         time_t data_modificacao_membro = membro_existente.data_modificacao;
@@ -263,6 +263,7 @@ int substituir_data(Archiver *archiver, const char *nome_arquivo) {
     return 0;
 
 }
+*/
 
 
 
