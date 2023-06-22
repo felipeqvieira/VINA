@@ -25,15 +25,15 @@ Onde a opção pode ser:
 
     -a : mesmo comportamento da opção -i, mas a substituição de um membro existente ocorre APENAS caso o parâmetro seja mais recente que o arquivado;
 
-    -m target : move o membro indicado na linha de comando para imediatamente depois do membro target existente em archive. A movimentação deve ocorrer na seção de dados do archive; DA PRA FAZER
+    -m target : move o membro indicado na linha de comando para imediatamente depois do membro target existente em archive. A movimentação deve ocorrer na seção de dados do archive; MAIS DIFICIL
 
-    -x : extrai os membros indicados de archive. Se os membros não forem indicados, todos devem ser extraídos. A extração consiste em ler o membro de archive e criar um arquivo correspondente, com conteúdo idêntico, em disco; DA PRA FAZER
-
+    -x : extrai os membros indicados de archive. Se os membros não forem indicados, todos devem ser extraídos. A extração consiste em ler o membro de archive e criar um arquivo correspondente, com conteúdo idêntico, em disco; TA INCOMPLETA
+    
     -r : remove os membros indicados de archive; 
 
     -c : lista o conteúdo de archive em ordem, incluindo as propriedades de cada membro (nome, UID, permissões, tamanho e data de modificação) e sua ordem no arquivo. A saída esperada é igual ao do comando tar com as opções tvf JÁ FIZ
 
-    -h : imprime uma pequena mensagem de ajuda com as opções disponíveis e encerra. DA PRA FAZER
+    -h : imprime uma pequena mensagem de ajuda com as opções disponíveis e encerra. Ja fiz.
 
 Caso sejam indicados nomes de arquivos com caminhos absolutos ou relativos, deve-se arquivar estes nomes SEMPRE com caminhos relativos. Por exemplo, se for indicado o arquivo /home/inf/xyz00/texto.doc, deve ser colocado no arquivo vpp como ./home/inf/xyz00/texto.doc.
 

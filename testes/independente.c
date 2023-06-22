@@ -36,8 +36,18 @@ typedef struct {
 
 
 
+
+
+
+
+
+
+
+
+
 /* MEMBROS*/
 
+/* Verifica nome */
 int verifica_nome(Archiver *archive, const char *nome_arquivo) {
     for (int i = 0; i < archive->archiveData.diretorio.num_membros; i++) {
         if (strcmp(nome_arquivo, archive->archiveData.diretorio.membros[i].nome) == 0) {
@@ -47,24 +57,7 @@ int verifica_nome(Archiver *archive, const char *nome_arquivo) {
     return -1;  // O nome do arquivo não existe no Archive
 }
 
-void listar_membros(const Archiver *archiver) {
-    printf("\n-----------------------\n");
-    printf("Membros no ArchiveData:");
-    printf("\n-----------------------\n");
-
-    for (int i = 0; i < archiver->archiveData.diretorio.num_membros; i++) {
-        const Membro *membro = &(archiver->archiveData.diretorio.membros[i]);
-        printf("Nome: %s\n", membro->nome);
-        printf("Usuario ID: %d\n", membro->user_ID);
-        printf("Permissoes: %d\n", membro->permissoes);
-        printf("Tamanho: %ld\n", membro->tamanho);
-        printf("Data de modificacao: %s", ctime(&(membro->data_modificacao)));
-        printf("Ordem: %d\n", membro->ordem);
-        printf("Localizacao: %ld\n", membro->localizacao);
-        printf("-----------------------\n");
-    }
-}
-
+/* Contar membros */
 int contar_membros(char **membros) {
     int contador = 0;
     while (membros[contador] != NULL) {
@@ -73,6 +66,7 @@ int contar_membros(char **membros) {
     return contador;
 }
 
+/* Extrair informações membro */
 void extrair_informacoes_membro(Archiver *archiver, const char *nome_arquivo, Membro *membro) {
     struct stat info_arquivo;
 
@@ -104,6 +98,14 @@ void extrair_informacoes_membro(Archiver *archiver, const char *nome_arquivo, Me
     membro->ordem = archiver->archiveData.diretorio.num_membros; 
     membro->localizacao = archiver->archiveData.diretorio.num_membros; 
 }
+
+
+
+
+
+
+
+
 
 
 
@@ -147,19 +149,113 @@ void verificar_archive_existente(Archiver *archiver, const char *nome_arquivo) {
 }
 
 
+
+
+
+
+
+
+
+/* Funções */
+
+/* Listar membros */
+void listar_membros(const Archiver *archiver) {
+    printf("\n-----------------------\n");
+    printf("Membros no ArchiveData:");
+    printf("\n-----------------------\n");
+
+    for (int i = 0; i < archiver->archiveData.diretorio.num_membros; i++) {
+        const Membro *membro = &(archiver->archiveData.diretorio.membros[i]);
+        printf("Nome: %s\n", membro->nome);
+        printf("Usuario ID: %d\n", membro->user_ID);
+        printf("Permissoes: %d\n", membro->permissoes);
+        printf("Tamanho: %ld\n", membro->tamanho);
+        printf("Data de modificacao: %s", ctime(&(membro->data_modificacao)));
+        printf("Ordem: %d\n", membro->ordem);
+        printf("Localizacao: %ld\n", membro->localizacao);
+        printf("-----------------------\n");
+    }
+}
+
+/* Inserir Membros */
+
 void inserir_membros(Archiver *archiver, char *nome_archive, char **nomes_arquivos, int num_arquivos) {
 
     printf("\n----------------------------------\n");
     printf("INSERINDO MEMBRO");
     printf("\n----------------------------------\n");
-    // Abre o arquivo do archive em modo de leitura e escrita binária
+
+    // Abre o arquivo do archive em modo de leitura e escrita binaria
     FILE *arquivo_archive = fopen(nome_archive, "rb+");
-    if (arquivo_archive == NULL) {
+    
+    if(arquivo_archive == NULL){
         printf("Erro ao abrir o arquivo do archive '%s'.\n", nome_archive);
         return;
     }
 
+    /*
+    Caso 1: nao tem membro nem diretorio.
+    Caso 2: tem diretorio mas nao tem membro.
+    Caso 3: tem membro mas nao tem diretorio.
+    */
+
+   FILE* arquivo_temporario = fopen("temporario.vpp", "wb");
+
+   if(arquivo_temporario == NULL){
+        printf("Erro ao abrir o arquivo do archive 'temporario.vpp'.\n");
+        return;
+    }
+
     // Move o cursor para o início do arquivo
+    fseek(arquivo_archive, 0, SEEK_SET);
+
+    long tamanho_arq = ftell(arquivo_archive);
+
+   if (tamanho_arq > sizeof(archiver->archiveData.diretorio)){
+        
+        printf("Tem diretorio e membros\n");
+
+        int tamanho_sem_dir = tamanho_arq - sizeof(archiver->archiveData.diretorio);
+        int quociente = tamanho_sem_dir/1024;
+        int resto = tamanho_sem_dir % 1024;
+
+        for (int i = 0; i < quociente; i++) {
+
+            unsigned char buffer[MAX_CONTEUDO];
+            size_t bytes_lidos = fread(buffer, sizeof(unsigned char), MAX_CONTEUDO, arquivo_archive);
+
+            if (bytes_lidos == 0) {
+                printf("Erro ao ler o conteúdo do arquivo.\n");
+                break;
+            }
+
+            size_t bytes_gravados = fwrite(buffer, sizeof(unsigned char), bytes_lidos, arquivo_temporario);
+
+            if (bytes_gravados < bytes_lidos) {
+                printf("Erro ao gravar o conteúdo no arquivo extraído.\n");
+                break;
+            }
+        }
+
+        // Ler o resto do conteúdo do membro, se houver
+        if (resto > 0) {
+            unsigned char buffer2[MAX_CONTEUDO];
+            size_t bytes_lidos = fread(buffer2, sizeof(unsigned char), resto, arquivo_archive);
+
+            if (bytes_lidos == 0) {
+                printf("Erro ao ler o conteúdo do arquivo.\n");
+            } else {
+                size_t bytes_gravados = fwrite(buffer2,sizeof(unsigned char), bytes_lidos, arquivo_temporario);
+                if (bytes_gravados < bytes_lidos) {
+                    printf("Erro ao gravar o conteúdo no arquivo extraído.\n");
+                }
+            }
+            
+        }
+
+    } 
+
+    fseek(arquivo_temporario ,0, SEEK_SET);
     fseek(arquivo_archive, 0, SEEK_SET);
 
     // Insere os novos membros no início do arquivo
@@ -205,12 +301,12 @@ void inserir_membros(Archiver *archiver, char *nome_archive, char **nomes_arquiv
 
         // Insere o conteúdo do membro no arquivo
         while (1) {
-            unsigned char buffer[1024];
-            size_t bytes_lidos = fread(buffer, sizeof(unsigned char), 1024, arquivo_membro);
+            unsigned char buffer3[MAX_CONTEUDO];
+            size_t bytes_lidos = fread(buffer3, sizeof(unsigned char), MAX_CONTEUDO, arquivo_membro);
             if (bytes_lidos == 0) {
                 break;  // Fim do arquivo
             }
-            fwrite(buffer, sizeof(unsigned char), bytes_lidos, arquivo_archive);
+            fwrite(buffer3, sizeof(unsigned char), bytes_lidos, arquivo_temporario);
         }
 
         // Fecha o arquivo do membro
@@ -219,127 +315,38 @@ void inserir_membros(Archiver *archiver, char *nome_archive, char **nomes_arquiv
         // Insere o novo membro no diretório
         archiver->archiveData.diretorio.membros[archiver->archiveData.diretorio.num_membros] = novo_membro;
         archiver->archiveData.diretorio.num_membros++;
-    }
 
-    // Move o cursor para o início do diretório
-    fseek(arquivo_archive, sizeof(ArchiveData), SEEK_SET);
+        fseek(arquivo_temporario,0,SEEK_SET);
+    }
+    
+    fseek(arquivo_temporario,0,SEEK_END);
 
     // Escreve o novo diretório no arquivo
     fwrite(&(archiver->archiveData.diretorio), sizeof(Diretorio), 1, arquivo_archive);
 
-    // Fecha o arquivo do archive
     fclose(arquivo_archive);
+    fclose(arquivo_temporario);
+
+    if (remove(nome_archive) != 0) {
+        printf("Erro ao remover o arquivo original.\n");
+        return;
+    }
+
+    if (rename("temporario.vpp", nome_archive) != 0) {
+        printf("Erro ao renomear o arquivo temporário.\n");
+        return;
+    }
+
 }
 
 
-/*int substituir_data(Archiver *archiver, const char *nome_arquivo) {
 
-    int indice_membro = verifica_nome(archiver, nome_arquivo);
 
-    if (indice_membro != -1) {
-        // O arquivo existe no diretório do archive
 
-        // Extrair informações do membro existente
-        Membro membro_existente = archiver->archiveData.diretorio.membros[indice_membro];
-        struct stat arquivo_stat;
-        if (stat(nome_arquivo, &arquivo_stat) != 0) {
-            printf("Erro ao obter informações do arquivo '%s'. O arquivo não será substituído.\n", nome_arquivo);
-            return -1;
-        }
-        time_t data_modificacao_arquivo = arquivo_stat.st_mtime;
-        time_t data_modificacao_membro = membro_existente.data_modificacao;
 
-        if (data_modificacao_arquivo <= data_modificacao_membro) {
-            printf("O arquivo '%s' não será substituído, pois não é mais recente do que o arquivo existente no archive.\n", nome_arquivo);
-            return 1;
-        }
 
-        // Substituir o membro existente pelo novo arquivo
-        substituir_membro(archiver, nome_arquivo);
-        return 1;
-    }
 
-    // Adicionar o novo arquivo ao archive
-    return 0;
 
-}
-*/
-
-/*
-void extrair_membro(Archiver *archiver, int indice) {
-    if (archiver == NULL) {
-        printf("Erro: Archiver não inicializado.\n");
-        return;
-    }
-
-    if (indice < 0 || indice >= archiver->archiveData.diretorio.num_membros) {
-        printf("Erro: Índice de membro inválido.\n");
-        return;
-    }
-
-    Membro *membro = &(archiver->archiveData.diretorio.membros[indice]);
-
-    // Abrir o arquivo do archive
-    FILE *arquivo_archive = fopen(archiver->archiveData.nome_arquivo, "rb");
-    if (arquivo_archive == NULL) {
-        printf("Erro ao abrir o arquivo archive '%s' para leitura.\n", archiver->archiveData.nome_arquivo);
-        return;
-    }
-
-    // Posicionar o ponteiro do arquivo na posição correta do conteúdo do membro
-    long posicao_conteudo = encontrar_posicao_conteudo(archiver, indice);
-    if (!navegar_para_posicao(arquivo_archive, posicao_conteudo)) {
-        fclose(arquivo_archive);
-        return;
-    }
-
-    // Criar um novo arquivo para armazenar o conteúdo extraído
-    FILE *arquivo_extraido = fopen(membro->nome_arquivo, "wb");
-    if (arquivo_extraido == NULL) {
-        printf("Erro ao criar o arquivo '%s' para escrita.\n", membro->nome_arquivo);
-        fclose(arquivo_archive);
-        return;
-    }
-
-    // Calcular o número de iterações necessárias para ler o conteúdo completo do membro
-    size_t tamanho_conteudo = membro->tamanho;
-    size_t iteracoes = tamanho_conteudo / 1024;
-    size_t resto = tamanho_conteudo % 1024;
-
-    // Ler as porções de 1024 bytes do membro
-    for (size_t i = 0; i < iteracoes; i++) {
-        char buffer[1024];
-        size_t bytes_lidos = fread(buffer, 1, sizeof(buffer), arquivo_archive);
-        if (bytes_lidos == 0) {
-            printf("Erro ao ler o conteúdo do arquivo.\n");
-            break;
-        }
-        size_t bytes_gravados = fwrite(buffer, 1, bytes_lidos, arquivo_extraido);
-        if (bytes_gravados < bytes_lidos) {
-            printf("Erro ao gravar o conteúdo no arquivo extraído.\n");
-            break;
-        }
-    }
-
-    // Ler o resto do conteúdo do membro, se houver
-    if (resto > 0) {
-        char buffer[1024];
-        size_t bytes_lidos = fread(buffer, 1, resto, arquivo_archive);
-        if (bytes_lidos == 0) {
-            printf("Erro ao ler o conteúdo do arquivo.\n");
-        } else {
-            size_t bytes_gravados = fwrite(buffer, 1, bytes_lidos, arquivo_extraido);
-            if (bytes_gravados < bytes_lidos) {
-                printf("Erro ao gravar o conteúdo no arquivo extraído.\n");
-            }
-        }
-    }
-
-    // Fechar os arquivos
-    fclose(arquivo_archive);
-    fclose(arquivo_extraido);
-}
-*/
 
 
 
@@ -391,6 +398,8 @@ int main(int argc, char *argv[]) {
     verificar_archive_existente(archiver, archive);
 
     int num_membros = contar_membros(membros);
+
+    listar_membros(archiver);
 
     // Encaminhar para a função apropriada de acordo com a opção
     if (strcmp(opcao, "-i") == 0) {
