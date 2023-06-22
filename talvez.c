@@ -183,7 +183,7 @@ void inserir_membros(Archiver *archiver, char *nome_archive, char **nomes_arquiv
     }
 
     // Move o cursor para o início do arquivo
-    fseek(arquivo_archive, 0, SEEK_SET);
+    fseek(arquivo_archive, 0,  SEEK_SET);
 
     // Insere os novos membros no início do arquivo
     for (int i = 0; i < num_arquivos; i++) {
@@ -226,13 +226,8 @@ void inserir_membros(Archiver *archiver, char *nome_archive, char **nomes_arquiv
 
         printf("Arquivo membro '%s' aberto.\n", nome_membro);
 
-        long deslocamento = 0;
-        for (int j = 0; j < i; j++) {
-            deslocamento += archiver->archiveData.diretorio.membros[j].tamanho;
-        }
-
-        // Move o cursor para o início do conteúdo do membro
-        fseek(arquivo_archive, deslocamento, SEEK_SET);
+        novo_membro.localizacao = ftell(arquivo_archive);
+        printf("localizacao: %ld\n", novo_membro.localizacao);
 
         // Insere o conteúdo do membro no arquivo
         while (1) {
@@ -253,7 +248,7 @@ void inserir_membros(Archiver *archiver, char *nome_archive, char **nomes_arquiv
     }
 
     // Move o cursor para o início do diretório
-    fseek(arquivo_archive, sizeof(ArchiveData), SEEK_SET);
+    fseek(arquivo_archive, 0, SEEK_END);
 
     // Escreve o novo diretório no arquivo
     fwrite(&(archiver->archiveData.diretorio), sizeof(Diretorio), 1, arquivo_archive);
@@ -475,9 +470,9 @@ int main(int argc, char *argv[]) {
     } else if (strcmp(opcao, "-x") == 0) {
         extrair_membro(archiver, archive, membros, num_membros);
     
-    }else if (strcmp(opcao, "-c") == 0) {
-        listar_membros(archiver);
-    }/*  else if (strcmp(opcao, "-x") == 0) {
+    }/* else if (strcmp(opcao, "-m") == 0) {
+        mover_membro(archive, membros);
+    } else if (strcmp(opcao, "-x") == 0) {
         extrair_membros(archive, membros);
     } else if (strcmp(opcao, "-r") == 0) {
         remover_membros(archive, membros);
@@ -491,7 +486,7 @@ int main(int argc, char *argv[]) {
     }
     */
 
-    
+    listar_membros(archiver);
 
     return 0;
 }
