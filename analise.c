@@ -643,7 +643,7 @@ int main(int argc, char *argv[]) {
         exibir_ajuda();
     }
 
-    
+    free(archiver);
 
     return 0;
 }
