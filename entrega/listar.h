@@ -1,0 +1,1 @@
+void listar_membros(const Archiver *archiver);

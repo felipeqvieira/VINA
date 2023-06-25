@@ -192,15 +192,7 @@ void verificar_archive_existente(Archiver *archiver, const char *nome_arquivo) {
 
 
 
-void exibir_ajuda() {
-    printf("Opções disponíveis:\n");
-    printf("-i : insere/acrescenta um ou mais membros ao archive. Caso o membro já exista no archive, ele deve ser substituído. Novos membros são inseridos respeitando a ordem da linha de comando, ao final do archive.\n");
-    printf("-a : mesmo comportamento da opção -i, mas a substituição de um membro existente ocorre APENAS caso o parâmetro seja mais recente que o arquivado.\n");
-    printf("-m target : move o membro indicado na linha de comando para imediatamente depois do membro target existente em archive. A movimentação deve ocorrer na seção de dados do archive.\n");
-    printf("-x : extrai os membros indicados de archive. Se os membros não forem indicados, todos devem ser extraídos. A extração consiste em ler o membro de archive e criar um arquivo correspondente, com conteúdo idêntico, em disco.\n");
-    printf("-r : remove os membros indicados de archive.\n");
-    printf("-c : lista o conteúdo de archive em ordem, incluindo as propriedades de cada membro (nome, UID, permissões, tamanho e data de modificação) e sua ordem no arquivo. A saída esperada é igual ao do comando tar com as opções tvf.\n");
-}
+
 
 
 
@@ -262,11 +254,9 @@ void inserir_membros(Archiver *archiver, char *nome_archive, char **nomes_arquiv
         printf("Arquivo membro '%s' aberto.\n", nome_membro);
 
         long deslocamento = 0;
-        for (int j = 0; j < archiver->archiveData.diretorio.num_membros; j++) {
+        for (int j = 0; j < i; j++) {
             deslocamento += archiver->archiveData.diretorio.membros[j].tamanho;
         }
-
-        printf("Deslocamento: %ld\n", deslocamento);
 
         // Move o cursor para o início do conteúdo do membro
         fseek(arquivo_archive, deslocamento, SEEK_SET);
@@ -345,9 +335,11 @@ void criar_diretorio(const char *caminho) {
 
 
 void extrair_membro(Archiver *archiver, char *nome_archive, char **nomes_membros, int num_membros) {
+
     printf("\n----------------------------------\n");
     printf("EXTRAINDO MEMBRO");
     printf("\n----------------------------------\n");
+
 
     // Abre o arquivo do archive em modo de leitura binária
     FILE *arquivo_archive = fopen(nome_archive, "rb");
@@ -391,18 +383,9 @@ void extrair_membro(Archiver *archiver, char *nome_archive, char **nomes_membros
 
         printf("O membro '%s' existe no ArchiveData.\n", nome_membro);
 
-        // Verifica se o diretório do membro existe e cria-o, se necessário
-        char *diretorio_membro = strdup(nome_membro);
-        char *ultimo_slash = strrchr(diretorio_membro, '/');
-        if (ultimo_slash != NULL) {
-            *ultimo_slash = '\0';
-            criar_diretorio(diretorio_membro);
-        }
-        free(diretorio_membro);
-
         // Calcula o deslocamento necessário para chegar ao início do conteúdo do membro
         long deslocamento = 0;
-        for (int j = 0; j < archiver->archiveData.diretorio.num_membros; j++) {
+        for (int j = 0; j < i; j++) {
             deslocamento += archiver->archiveData.diretorio.membros[j].tamanho;
         }
 
@@ -497,77 +480,6 @@ void extrair_membro(Archiver *archiver, char *nome_archive, char **nomes_membros
 
 
 
-void remover_membros(Archiver *archiver, char *nome_archive, char **nomes_membros, int num_membros) {
-    // Abre o arquivo original do archive para leitura
-    FILE *arquivo_original = fopen(nome_archive, "rb");
-    if (arquivo_original == NULL) {
-        printf("Erro ao abrir o arquivo original do archive.\n");
-        return;
-    }
-
-    printf("Arquivo original aberto!\n");
-
-    // Cria o arquivo temporário do archive para escrita
-    FILE *arquivo_temporario = fopen("temp_archive", "wb");
-    if (arquivo_temporario == NULL) {
-        printf("Erro ao criar o arquivo temporário do archive.\n");
-        fclose(arquivo_original);
-        return;
-    }
-
-    // Passa os membros do diretório em ordem, escrevendo no arquivo temporário os membros que não foram escolhidos para serem removidos
-    for (int i = 0; i < archiver->archiveData.diretorio.num_membros; i++) {
-
-        printf("Numero de membros: %d\n", archiver->archiveData.diretorio.num_membros);
-
-        Membro *membro = &(archiver->archiveData.diretorio.membros[i]);
-
-        int membro_removido = 0;
-        for (int j = 0; j < num_membros; j++) {
-            if (strcmp(membro->nome, nomes_membros[j]) == 0) {
-                membro_removido = 1;
-                break;
-            }
-        }
-
-        if (!membro_removido) {
-            
-        }
-
-    }
-
-    // Escreve o diretório atualizado no final do arquivo temporário do archive
-    if (fwrite(&(archiver->archiveData.diretorio), sizeof(Diretorio), 1, arquivo_temporario) != 1) {
-        printf("Erro ao escrever o diretório atualizado no arquivo temporário do archive.\n");
-        fclose(arquivo_original);
-        fclose(arquivo_temporario);
-        remove("temp_archive");
-        return;
-    }
-
-    // Fecha os arquivos
-    fclose(arquivo_original);
-    fclose(arquivo_temporario);
-
-    /*
-
-    // Renomeia o arquivo temporário para substituir o arquivo original do archive
-    if (rename("temp_archive", nome_archive) != 0) {
-        printf("Erro ao renomear o arquivo temporário para substituir o arquivo original do archive.\n");
-        remove("temp_archive");
-        return;
-    }
-    */
-
-    printf("Membros removidos com sucesso do archive.\n");
-}
-
-
-
-
-
-
-
 
 
 
@@ -601,15 +513,18 @@ int main(int argc, char *argv[]) {
         inserir_membros(archiver, archive, membros, num_membros);
     } else if (strcmp(opcao, "-x") == 0) {
         extrair_membro(archiver, archive, membros, num_membros);
+    
     }else if (strcmp(opcao, "-c") == 0) {
         listar_membros(archiver);
+    }/*  else if (strcmp(opcao, "-x") == 0) {
+        extrair_membros(archive, membros);
     } else if (strcmp(opcao, "-r") == 0) {
-        remover_membros(archiver, archive, membros, num_membros);
+        remover_membros(archive, membros);
+    } else if (strcmp(opcao, "-c") == 0) {
+        listar_conteudo(archive);
     } else if (strcmp(opcao, "-h") == 0) {
         exibir_ajuda();
-    }/* else if (strcmp(opcao, "-c") == 0) {
-        listar_conteudo(archive);
-    }  else {
+    } else {
         printf("Opção inválida.\n");
         exibir_ajuda();
     }
