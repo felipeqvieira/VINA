@@ -1,5 +1,6 @@
 #include "archiver.h"
 
+/* Pega um caminho absoluto e transforma num caminho relativo */
 void armazenar_caminho_relativo(Membro *membro) {
     char *nome = membro->nome;
 

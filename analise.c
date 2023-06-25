@@ -129,6 +129,7 @@ void extrair_informacoes_membro(Archiver *archiver, const char *nome_arquivo, Me
     }
     *dest = '\0';
 
+
     membro->user_ID = info_arquivo.st_uid;
     membro->permissoes = info_arquivo.st_mode & 0777;
     membro->tamanho = info_arquivo.st_size;
@@ -147,9 +148,6 @@ void extrair_informacoes_membro(Archiver *archiver, const char *nome_arquivo, Me
 
 void verificar_archive_existente(Archiver *archiver, const char *nome_arquivo) {
 
-    printf("\n----------------------------------\n");
-    printf("VERFICANDO ARCHIVE EXISTENTE");
-    printf("\n----------------------------------\n");
     FILE *arquivo = fopen(nome_arquivo, "r+b");
     if (arquivo == NULL) {
         printf("O arquivo '%s' nao existe. Um novo arquivo sera criado.\n", nome_arquivo);
@@ -178,7 +176,6 @@ void verificar_archive_existente(Archiver *archiver, const char *nome_arquivo) {
     fread(&(archiver->archiveData.diretorio), sizeof(Diretorio), 1, arquivo);
     fclose(arquivo);
 
-    printf("Archive '%s' encontrado. Diretorio carregado com sucesso.\n", nome_arquivo);
 }
 
 
@@ -203,11 +200,10 @@ void exibir_ajuda() {
 }
 
 
+
+
 void inserir_membros(Archiver *archiver, char *nome_archive, char **nomes_arquivos, int num_arquivos) {
 
-    printf("\n----------------------------------\n");
-    printf("INSERINDO MEMBRO");
-    printf("\n----------------------------------\n");
     // Abre o arquivo do archive em modo de leitura e escrita binária
     FILE *arquivo_archive = fopen(nome_archive, "rb+");
     if (arquivo_archive == NULL) {
@@ -227,7 +223,6 @@ void inserir_membros(Archiver *archiver, char *nome_archive, char **nomes_arquiv
         for (int j = 0; j < archiver->archiveData.diretorio.num_membros; j++) {
             Membro *membro = &(archiver->archiveData.diretorio.membros[j]);
             if (strcmp(membro->nome, nome_membro) == 0) {
-                printf("O membro '%s' já existe no ArchiveData.\n", nome_membro);
                 membro_existente = 1;
                 break;
             }
@@ -236,15 +231,11 @@ void inserir_membros(Archiver *archiver, char *nome_archive, char **nomes_arquiv
             continue;  // Passa para o próximo arquivo
         }
 
-        printf("O membro '%s' não existe no ArchiveData.\n", nome_membro);
-
         // Verifica se há espaço disponível no diretório
         if (archiver->archiveData.diretorio.num_membros >= QUANTIDADE_MAXIMA) {
             printf("Não há espaço disponível para adicionar o membro '%s'.\n", nome_membro);
             continue;  // Passa para o próximo arquivo
         }
-
-        printf("Há espaço disponível para adicionar o membro '%s'.\n", nome_membro);
 
         // Cria uma nova estrutura de Membro para armazenar as informações
         Membro novo_membro;
@@ -256,8 +247,6 @@ void inserir_membros(Archiver *archiver, char *nome_archive, char **nomes_arquiv
             printf("Erro ao abrir o arquivo do membro '%s'.\n", nome_membro);
             continue;  // Passa para o próximo arquivo
         }
-
-        printf("Arquivo membro '%s' aberto.\n", nome_membro);
 
         long deslocamento = 0;
         for (int j = 0; j < archiver->archiveData.diretorio.num_membros; j++) {
@@ -288,7 +277,8 @@ void inserir_membros(Archiver *archiver, char *nome_archive, char **nomes_arquiv
     }
 
     // Move o cursor para o início do diretório
-    fseek(arquivo_archive, sizeof(ArchiveData), SEEK_SET);
+    /* fseek(arquivo_archive, sizeof(ArchiveData), SEEK_SET);*/
+    fseek(arquivo_archive, 0, SEEK_END);
 
     // Escreve o novo diretório no arquivo
     fwrite(&(archiver->archiveData.diretorio), sizeof(Diretorio), 1, arquivo_archive);
@@ -339,12 +329,6 @@ void criar_diretorio(const char *caminho) {
 
 void extrair_membro(Archiver *archiver, char *nome_archive, char **nomes_membros, int nume_membros) {
 
-    printf("\n----------------------------------\n");
-    printf("EXTRAINDO MEMBRO");
-    printf("\n----------------------------------\n");
-
-    printf("num membros: %d\n", archiver->archiveData.diretorio.num_membros);
-
     // Abre o arquivo do archive em modo de leitura binária
     FILE *arquivo_archive = fopen(nome_archive, "rb");
     if (arquivo_archive == NULL) {
@@ -356,12 +340,8 @@ void extrair_membro(Archiver *archiver, char *nome_archive, char **nomes_membros
     fseek(arquivo_archive, 0, SEEK_END);
     long tamanho_arquivo = ftell(arquivo_archive);
 
-    printf("tamanho do arquivo: %ld\n", tamanho_arquivo);
-
     fseek(arquivo_archive, 0, SEEK_SET);
     tamanho_arquivo -= sizeof(ArchiveData);
-
-    printf("tamanho sem diretorio: %ld\n", tamanho_arquivo);
 
     // Verifica se todos os membros devem ser extraídos
     int extrair_todos = (nume_membros == 0);
@@ -370,7 +350,6 @@ void extrair_membro(Archiver *archiver, char *nome_archive, char **nomes_membros
     for (int i = 0; i < archiver->archiveData.diretorio.num_membros; i++) {
         Membro *membro = &(archiver->archiveData.diretorio.membros[i]);
         const char *nome_membro = membro->nome;
-        printf("nome do membro: %s\n", nome_membro);
 
         // Verifica se o membro deve ser extraído
         int extrair_membro = extrair_todos;
@@ -384,8 +363,6 @@ void extrair_membro(Archiver *archiver, char *nome_archive, char **nomes_membros
         if (!extrair_membro) {
             continue; // Pula para o próximo membro a ser extraído
         }
-
-        printf("O membro '%s' existe no ArchiveData.\n", nome_membro);
 
         // Verifica se o diretório do membro existe e cria-o, se necessário
         char *diretorio_membro = strdup(nome_membro);
@@ -402,8 +379,6 @@ void extrair_membro(Archiver *archiver, char *nome_archive, char **nomes_membros
             deslocamento += archiver->archiveData.diretorio.membros[j].tamanho;
         }
 
-        printf("deslocamento: %ld\n", deslocamento);
-
         // Move o cursor para o início do conteúdo do membro
         fseek(arquivo_archive, deslocamento, SEEK_SET);
 
@@ -417,14 +392,11 @@ void extrair_membro(Archiver *archiver, char *nome_archive, char **nomes_membros
         // Obtém o tamanho do membro a ser extraído
         long tamanho_membro = membro->tamanho;
 
-        printf("tamanho do membro = %ld\n", tamanho_membro);
-
         // Define o tamanho do buffer para a leitura em blocos de 1024 bytes
         unsigned char buffer[MAX_CONTEUDO];
 
         // Calcula o número de leituras completas de 1024 bytes a serem feitas
         int quociente = tamanho_membro / MAX_CONTEUDO;
-        printf("quociente = %d\n", quociente);
 
         // Realiza as leituras completas de 1024 bytes
         for (int j = 0; j < quociente; j++) {
@@ -436,9 +408,6 @@ void extrair_membro(Archiver *archiver, char *nome_archive, char **nomes_membros
                 remove(nome_membro);
                 break;
             }
-
-            printf("conteudo do membro %s\n", buffer);
-
             size_t bytes_gravados = fwrite(buffer, sizeof(unsigned char), bytes_lidos, arquivo_membro);
 
             if (bytes_gravados < bytes_lidos) {
@@ -451,7 +420,6 @@ void extrair_membro(Archiver *archiver, char *nome_archive, char **nomes_membros
 
         // Calcula o tamanho restante (resto) para a leitura final, se houver
         int resto = tamanho_membro % MAX_CONTEUDO;
-        printf("resto = %d\n", resto);
 
         // Realiza a leitura final, se houver resto
         if (resto > 0) {
@@ -463,8 +431,6 @@ void extrair_membro(Archiver *archiver, char *nome_archive, char **nomes_membros
                 remove(nome_membro);
                 continue; // Pula para o próximo membro a ser extraído
             }
-
-            printf("conteudo do membro %s\n", buffer);
 
             size_t bytes_gravados = fwrite(buffer, sizeof(unsigned char), bytes_lidos, arquivo_membro);
 
@@ -478,12 +444,21 @@ void extrair_membro(Archiver *archiver, char *nome_archive, char **nomes_membros
 
         // Fecha o arquivo do membro
         fclose(arquivo_membro);
-
-        printf("Membro '%s' extraído com sucesso para o arquivo '%s'.\n", nome_membro, nome_membro);
     }
 
     // Fecha o arquivo de archive
     fclose(arquivo_archive);
+}
+
+void atualizar_localizacao_membros(Archiver *archiver) {
+    long deslocamento = 0;
+
+    for (int j = 0; j < archiver->archiveData.diretorio.num_membros; j++) {
+        
+        archiver->archiveData.diretorio.membros[j].localizacao = deslocamento;
+        deslocamento += archiver->archiveData.diretorio.membros[j].tamanho;
+
+    }
 }
 
 
@@ -535,28 +510,18 @@ void remover_membros(Archiver *archiver, char *nome_archive, char **nomes_membro
     for (int i = 0; i < num_membros_atualizado; i++) {
         Membro *membro = &(archiver->archiveData.diretorio.membros[i]);
 
-        long deslocamento = 0;
-        for (int j = 0; j < archiver->archiveData.diretorio.num_membros; j++) {
-            deslocamento += archiver->archiveData.diretorio.membros[j].tamanho;
-        }
+        long deslocamento = membro->localizacao;
 
         fseek(arquivo_original, deslocamento, SEEK_SET);
-
-        printf("deslocamento: %d\n", deslocamento);
 
         long tamanho_membro = membro->tamanho;
 
         unsigned char buffer[MAX_CONTEUDO];
 
         int quociente = tamanho_membro / MAX_CONTEUDO;
-
-        printf("tamanho membro = %ld", tamanho_membro);
-
-    
+ 
         for (int j = 0; j < quociente; j++) {
             size_t bytes_lidos = fread(buffer, sizeof(unsigned char), MAX_CONTEUDO, arquivo_original);
-
-            printf("conteudo membro: %s\n", buffer);
 
             if (bytes_lidos == 0) {
                 printf("Erro ao ler o conteúdo do archive.\n");
@@ -580,8 +545,6 @@ void remover_membros(Archiver *archiver, char *nome_archive, char **nomes_membro
 
         if (resto > 0) {
             size_t bytes_lidos = fread(buffer, sizeof(unsigned char), resto, arquivo_original);
-
-            printf("conteudo membro: %s\n", buffer);
 
             if (bytes_lidos == 0) {
                 printf("Erro ao ler o conteúdo do arquivo.\n");
@@ -628,9 +591,8 @@ void remover_membros(Archiver *archiver, char *nome_archive, char **nomes_membro
         remove("temp_archive");
         return;
     }
-    
 
-    printf("Membros removidos com sucesso do archive.\n");
+    atualizar_localizacao_membros(archiver);
     
 }
 

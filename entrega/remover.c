@@ -1,8 +1,7 @@
 #include "archiver.h"
-
+#include "func_comp.h"
+/* remove membros do archive */
 void remover_membros(Archiver *archiver, char *nome_archive, char **nomes_membros, int num_membros) {
-    // Verifica se nenhum membro foi especificado para remoção
-    int remover_todos_os_membros = (num_membros == 0);
 
     // Abre o arquivo original do archive para leitura
     FILE *arquivo_original = fopen(nome_archive, "rb");
@@ -27,18 +26,12 @@ void remover_membros(Archiver *archiver, char *nome_archive, char **nomes_membro
         Membro *membro = &(archiver->archiveData.diretorio.membros[i]);
 
         int membro_removido = 0;
-        if (remover_todos_os_membros) {
-            membro_removido = 1;
-            num_membros_atualizado--;
-            num_membros_removidos++;
-        } else {
-            for (int j = 0; j < num_membros; j++) {
-                if (strcmp(membro->nome, nomes_membros[j]) == 0) {
-                    membro_removido = 1;
-                    num_membros_atualizado--;
-                    num_membros_removidos++;
-                    break;
-                }
+        for (int j = 0; j < num_membros; j++) {
+            if (strcmp(membro->nome, nomes_membros[j]) == 0) {
+                membro_removido = 1;
+                num_membros_atualizado--;
+                num_membros_removidos++;
+                break;
             }
         }
 
@@ -56,10 +49,7 @@ void remover_membros(Archiver *archiver, char *nome_archive, char **nomes_membro
     for (int i = 0; i < num_membros_atualizado; i++) {
         Membro *membro = &(archiver->archiveData.diretorio.membros[i]);
 
-        long deslocamento = 0;
-        for (int j = 0; j < i; j++) {
-            deslocamento += archiver->archiveData.diretorio.membros[j].tamanho;
-        }
+        long deslocamento = membro->localizacao;
 
         fseek(arquivo_original, deslocamento, SEEK_SET);
 
@@ -68,11 +58,9 @@ void remover_membros(Archiver *archiver, char *nome_archive, char **nomes_membro
         unsigned char buffer[MAX_CONTEUDO];
 
         int quociente = tamanho_membro / MAX_CONTEUDO;
-
+ 
         for (int j = 0; j < quociente; j++) {
             size_t bytes_lidos = fread(buffer, sizeof(unsigned char), MAX_CONTEUDO, arquivo_original);
-
-            printf("conteudo membro: %s\n", buffer);
 
             if (bytes_lidos == 0) {
                 printf("Erro ao ler o conteúdo do archive.\n");
@@ -90,13 +78,12 @@ void remover_membros(Archiver *archiver, char *nome_archive, char **nomes_membro
                 break;
             }
         }
+    
 
         int resto = tamanho_membro % MAX_CONTEUDO;
 
         if (resto > 0) {
             size_t bytes_lidos = fread(buffer, sizeof(unsigned char), resto, arquivo_original);
-
-            printf("conteudo membro: %s\n", buffer);
 
             if (bytes_lidos == 0) {
                 printf("Erro ao ler o conteúdo do arquivo.\n");
@@ -132,7 +119,7 @@ void remover_membros(Archiver *archiver, char *nome_archive, char **nomes_membro
     fclose(arquivo_temporario);
 
     // Renomeia o arquivo temporário para substituir o arquivo original do archive
-    if (remove(nome_archive) != 0) {
+     if (remove(nome_archive) != 0) {
         printf("Erro ao remover o arquivo original do archive.\n");
         remove("temp_archive");
         return;
@@ -143,5 +130,7 @@ void remover_membros(Archiver *archiver, char *nome_archive, char **nomes_membro
         remove("temp_archive");
         return;
     }
+
+    atualizar_localizacao_membros(archiver);
     
 }

@@ -1,6 +1,7 @@
 #include "archiver.h"
-#include "func_comp_membro.h"
+#include "func_comp.h"
 
+/* insere um membro no archive */
 void inserir_membros(Archiver *archiver, char *nome_archive, char **nomes_arquivos, int num_arquivos) {
 
     // Abre o arquivo do archive em modo de leitura e escrita binária
@@ -22,7 +23,6 @@ void inserir_membros(Archiver *archiver, char *nome_archive, char **nomes_arquiv
         for (int j = 0; j < archiver->archiveData.diretorio.num_membros; j++) {
             Membro *membro = &(archiver->archiveData.diretorio.membros[j]);
             if (strcmp(membro->nome, nome_membro) == 0) {
-                printf("O membro '%s' já existe no ArchiveData.\n", nome_membro);
                 membro_existente = 1;
                 break;
             }
@@ -77,6 +77,7 @@ void inserir_membros(Archiver *archiver, char *nome_archive, char **nomes_arquiv
     }
 
     // Move o cursor para o início do diretório
+    /* fseek(arquivo_archive, sizeof(ArchiveData), SEEK_SET);*/
     fseek(arquivo_archive, 0, SEEK_END);
 
     // Escreve o novo diretório no arquivo

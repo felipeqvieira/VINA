@@ -1,11 +1,10 @@
 #include "archiver.h"
-#include "ajuda.h"
+#include "func_comp.h"
 #include "extrair.h"
 #include "inserir.h"
-#include "listar.h"
+#include "ajuda.h"
 #include "remover.h"
-#include "func_comp_archive.h"
-#include "func_comp_membro.h"
+#include "listar.h"
 
 int main(int argc, char *argv[]) {
     // Verificar se foram fornecidos argumentos suficientes

@@ -1,5 +1,6 @@
 #include "archiver.h"
 
+/* lista os membros do archive */
 void listar_membros(const Archiver *archiver) {
     printf("\n-----------------------\n");
     printf("Membros no ArchiveData:");

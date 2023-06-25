@@ -1,42 +1,8 @@
 #include "archiver.h"
-#include <string.h>
+#include "func_comp.h"
 
-char *strdup(const char *s);
-
-void criar_diretorio(const char *caminho) {
-    char *caminho_temp = strdup(caminho);
-    char *diretorio = strtok(caminho_temp, "/");
-    char *diretorio_atual = NULL;
-
-    while (diretorio != NULL) {
-        if (diretorio_atual == NULL) {
-            diretorio_atual = strdup(diretorio);
-        } else {
-            diretorio_atual = (char *)realloc(diretorio_atual, strlen(diretorio_atual) + strlen(diretorio) + 2);
-            strcat(diretorio_atual, "/");
-            strcat(diretorio_atual, diretorio);
-        }
-
-        // Verifica se o diretório existe
-        struct stat info;
-        if (stat(diretorio_atual, &info) == -1) {
-            // O diretório não existe, cria-o
-            if (mkdir(diretorio_atual, 0777) == -1) {
-                perror("Erro ao criar diretório");
-                free(diretorio_atual);
-                free(caminho_temp);
-                return;
-            }
-        }
-
-        diretorio = strtok(NULL, "/");
-    }
-
-    free(diretorio_atual);
-    free(caminho_temp);
-}
-
-void extrair_membro(Archiver *archiver, char *nome_archive, char **nomes_membros, int num_membros) {
+/* Extrai um membro do archive */
+void extrair_membro(Archiver *archiver, char *nome_archive, char **nomes_membros, int nume_membros) {
 
     // Abre o arquivo do archive em modo de leitura binária
     FILE *arquivo_archive = fopen(nome_archive, "rb");
@@ -53,7 +19,7 @@ void extrair_membro(Archiver *archiver, char *nome_archive, char **nomes_membros
     tamanho_arquivo -= sizeof(ArchiveData);
 
     // Verifica se todos os membros devem ser extraídos
-    int extrair_todos = (num_membros == 0);
+    int extrair_todos = (nume_membros == 0);
 
     // Percorre a lista de membros e extrai cada um
     for (int i = 0; i < archiver->archiveData.diretorio.num_membros; i++) {
@@ -62,7 +28,7 @@ void extrair_membro(Archiver *archiver, char *nome_archive, char **nomes_membros
 
         // Verifica se o membro deve ser extraído
         int extrair_membro = extrair_todos;
-        for (int j = 0; j < num_membros; j++) {
+        for (int j = 0; j < nume_membros; j++) {
             if (strcmp(nome_membro, nomes_membros[j]) == 0) {
                 extrair_membro = 1;
                 break;
@@ -84,11 +50,11 @@ void extrair_membro(Archiver *archiver, char *nome_archive, char **nomes_membros
 
         // Calcula o deslocamento necessário para chegar ao início do conteúdo do membro
         long deslocamento = 0;
-        for (int j = 0; j < archiver->archiveData.diretorio.num_membros; j++) {
+        for (int j = 0; j < i; j++) {
             deslocamento += archiver->archiveData.diretorio.membros[j].tamanho;
         }
 
-        // Move o cursor para o início do conteúdo do membro
+        // Move o ponteiro para o início do conteúdo do membro
         fseek(arquivo_archive, deslocamento, SEEK_SET);
 
         // Cria o arquivo do membro para escrita
@@ -117,7 +83,6 @@ void extrair_membro(Archiver *archiver, char *nome_archive, char **nomes_membros
                 remove(nome_membro);
                 break;
             }
-
             size_t bytes_gravados = fwrite(buffer, sizeof(unsigned char), bytes_lidos, arquivo_membro);
 
             if (bytes_gravados < bytes_lidos) {
@@ -154,9 +119,9 @@ void extrair_membro(Archiver *archiver, char *nome_archive, char **nomes_membros
 
         // Fecha o arquivo do membro
         fclose(arquivo_membro);
-
     }
 
     // Fecha o arquivo de archive
     fclose(arquivo_archive);
 }
+

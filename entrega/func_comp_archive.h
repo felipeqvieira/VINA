@@ -1,1 +1,0 @@
-void verificar_archive_existente(Archiver *archiver, const char *nome_arquivo);
