@@ -1,4 +1,7 @@
 #include "archiver.h"
+#include <string.h>
+
+char *strdup(const char *s);
 
 void criar_diretorio(const char *caminho) {
     char *caminho_temp = strdup(caminho);
@@ -9,7 +12,7 @@ void criar_diretorio(const char *caminho) {
         if (diretorio_atual == NULL) {
             diretorio_atual = strdup(diretorio);
         } else {
-            diretorio_atual = realloc(diretorio_atual, strlen(diretorio_atual) + strlen(diretorio) + 2);
+            diretorio_atual = (char *)realloc(diretorio_atual, strlen(diretorio_atual) + strlen(diretorio) + 2);
             strcat(diretorio_atual, "/");
             strcat(diretorio_atual, diretorio);
         }
@@ -18,7 +21,7 @@ void criar_diretorio(const char *caminho) {
         struct stat info;
         if (stat(diretorio_atual, &info) == -1) {
             // O diretório não existe, cria-o
-            if (mkdir(diretorio_atual) == -1) {
+            if (mkdir(diretorio_atual, 0777) == -1) {
                 perror("Erro ao criar diretório");
                 free(diretorio_atual);
                 free(caminho_temp);

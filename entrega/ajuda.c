@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 void exibir_ajuda() {
     printf("Opções disponíveis:\n");
     printf("-i : insere/acrescenta um ou mais membros ao archive. Caso o membro já exista no archive, ele deve ser substituído. Novos membros são inseridos respeitando a ordem da linha de comando, ao final do archive.\n");

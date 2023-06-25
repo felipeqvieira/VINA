@@ -4,6 +4,8 @@
 #include "inserir.h"
 #include "listar.h"
 #include "remover.h"
+#include "func_comp_archive.h"
+#include "func_comp_membro.h"
 
 int main(int argc, char *argv[]) {
     // Verificar se foram fornecidos argumentos suficientes
