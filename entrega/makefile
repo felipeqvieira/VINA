@@ -2,11 +2,10 @@ CFLAGS = -Wall -std=c99 -g
 LDFLAGS = -lm
 OBJS = vina++.o ajuda.o archiver.o extrair.o func_comp_archive.o func_comp_membro.o inserir.o listar.o remover.o
 CC = gcc
-DESTDIR = fqv21/
 
-all: $(DESTDIR)vina++
+all: vina++
 
-$(DESTDIR)vina++: $(OBJS)
+vina++: $(OBJS)
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 vina++.o: vina++.c
@@ -40,4 +39,4 @@ clean:
 	rm -f $(OBJS)
 
 purge: clean
-	rm -f $(DESTDIR)vina++
+	rm -f vina++
