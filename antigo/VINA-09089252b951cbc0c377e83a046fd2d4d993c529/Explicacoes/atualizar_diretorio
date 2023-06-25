@@ -1,0 +1,19 @@
+                        Atualizar Diretório
+
+    A função `atualizar_diretorio` tem como objetivo atualizar as informações do diretório dentro de um arquivo de archive. Vamos analisar suas características e estruturas:
+
+    - `archive`: É um ponteiro para a estrutura `Archive` que contém as informações do arquivo de archive, incluindo o número de membros e o array de ponteiros para os membros.
+
+    - `arquivo`: É um ponteiro para o arquivo de archive onde as informações serão atualizadas.
+
+    A função realiza as seguintes operações:
+
+    1. Posiciona o cursor no início da área do arquivo onde estão armazenados os membros do archive, pulando o cabeçalho. Isso é feito usando a função `fseek` para mover o cursor para a posição correta. A posição é calculada somando o tamanho de um inteiro (que representa o número de membros) com o tamanho de uma estrutura `Membro` multiplicado pelo número de membros existentes.
+
+    2. Em um loop, itera sobre todos os membros do archive.
+
+    3. Para cada membro, posiciona o cursor no local correto onde as informações desse membro devem ser escritas dentro do arquivo. Isso é feito usando a função `fseek` para mover o cursor para a posição correta. A posição é calculada somando o tamanho de um inteiro (representando o número de membros) com o tamanho de uma estrutura `Membro` multiplicado pelo índice atual do membro.
+
+    4. Escreve as informações do membro atual no arquivo usando a função `fwrite`. O tamanho de cada membro é determinado usando `sizeof(Membro)`.
+
+    Essa função é responsável por atualizar o diretório dentro do arquivo de archive com as informações dos membros. Ela percorre todos os membros e escreve suas informações no local correto do arquivo, permitindo que as alterações nos membros sejam persistidas e atualizadas no arquivo de archive.

@@ -1,0 +1,1 @@
+void extrair_membros(Archiver* archiver, char** membros, int num_membros);

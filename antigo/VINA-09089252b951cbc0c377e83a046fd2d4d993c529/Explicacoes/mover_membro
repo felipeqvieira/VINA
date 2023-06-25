@@ -1,0 +1,33 @@
+                        Mover Membro
+
+    A função `mover_membro` tem como objetivo mover um membro dentro da estrutura `Archive`, alterando a ordem em que os membros são armazenados. Vamos analisar suas características e estruturas:
+
+    - `archive`: É um ponteiro para a estrutura `Archive` que contém os membros a serem movidos.
+    - `membro_frente`: É o nome do membro que será movido para frente na ordem.
+    - `membro_atras`: É o nome do membro que será movido para trás na ordem.
+
+    A função realiza as seguintes operações:
+
+    1. Abre o arquivo `membro_atras` em modo de leitura binária usando `fopen`. Se ocorrer algum erro na abertura do arquivo, exibe uma mensagem de erro usando `perror`, fecha o arquivo e retorna um código de erro.
+
+    2. Encontra o índice do membro `membro_atras` dentro da estrutura `Archive` usando a função `encontrar_nome`.
+
+    3. Abre o arquivo `membro_frente` em modo de leitura binária usando `fopen`. Se ocorrer algum erro na abertura do arquivo, exibe uma mensagem de erro usando `perror`, fecha ambos os arquivos e retorna um código de erro.
+
+    4. Encontra o índice do membro `membro_frente` dentro da estrutura `Archive` usando a função `encontrar_nome`.
+
+    5. Verifica se o índice do `membro_frente` é igual ao `indice1 + 1`. Se for verdadeiro, significa que o membro já está na posição correta e não é necessário movê-lo. Nesse caso, fecha os arquivos e retorna um código indicando que o arquivo já está verificado.
+
+    6. Armazena o ponteiro do membro `membro_frente` em uma variável temporária `membro_temp`.
+
+    7. Realiza o deslocamento dos membros dentro da estrutura `Archive` para acomodar o membro `membro_frente` em uma posição anterior.
+
+    8. Atualiza o diretório do arquivo destino usando a função `atualizar_diretorio`.
+
+    9. Escreve a estrutura `Archive` atualizada no arquivo usando a função `escrever_arquivo_archive`.
+
+    10. Fecha os arquivos abertos.
+
+    11. Retorna um código indicando que o arquivo foi verificado com sucesso.
+
+    Essa função é responsável por reordenar os membros dentro da estrutura `Archive`, movendo um membro para uma posição anterior na ordem. Ela realiza a manipulação dos índices e ponteiros dentro da estrutura, além de atualizar o diretório e escrever a estrutura atualizada no arquivo. Isso permite que a ordem dos membros seja modificada e persistida para futuras operações no archive.

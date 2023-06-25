@@ -1,0 +1,75 @@
+    1. Definir a estrutura do arquivo "archive" que permitirá armazenar os membros e suas informações.
+
+    2. Implementar a opção de inserção/acréscimo de membros (-i):
+            - Verificar se o arquivo "archive" existe e pode ser aberto.
+            - Ler os membros indicados na linha de comando e salvá-los sequencialmente no "archive".
+            - Atualizar as informações do diretório do "archive" com os detalhes dos membros adicionados.
+    
+    3. Implementar a opção de inserção/acréscimo de membros apenas se mais recentes (-a):
+            - Verificar se o arquivo "archive" existe e pode ser aberto.
+            - Comparar a data de modificação dos membros indicados com os membros existentes no "archive".
+            - Substituir apenas os membros mais recentes no "archive".
+            - Atualizar as informações do diretório do "archive" com as modificações feitas.
+
+    4. Implementar a opção de mover um membro para depois de outro (-m):
+            - Verificar se o arquivo "archive" existe e pode ser aberto.
+            - Localizar o membro de destino indicado na linha de comando.
+            - Mover o membro especificado para imediatamente após o membro de destino na seção de dados do "archive".
+            - Atualizar as informações do diretório do "archive" com as mudanças feitas.
+
+    5. Implementar a opção de extração de membros (-x):
+            - Verificar se o arquivo "archive" existe e pode ser aberto.
+            - Ler os membros indicados para extração.
+            - Criar arquivos correspondentes em disco com o conteúdo idêntico aos membros extraídos do "archive".
+            - Criar hierarquia de diretórios conforme necessário.
+
+    6. Implementar a opção de remoção de membros (-r):
+            - Verificar se o arquivo "archive" existe e pode ser aberto.
+            - Localizar os membros indicados para remoção.
+            - Remover os membros especificados do "archive".
+            - Atualizar as informações do diretório do "archive" após a remoção.
+
+    7. Implementar a opção de listar o conteúdo do "archive" (-c):
+            - Verificar se o arquivo "archive" existe e pode ser aberto.
+            - Ler as informações do diretório do "archive" e exibir o conteúdo em ordem, incluindo as propriedades de cada membro.
+    
+    8. Implementar a opção de ajuda (-h):
+            - Exibir uma mensagem de ajuda com as opções disponíveis.
+
+    9. Tratar erros:
+            - Identificar e tratar erros durante a execução do programa.
+            - Imprimir mensagens de erro apropriadas em stderr.
+            - Encerrar a execução do programa com um código de saída diferente de 0 em caso de erro.
+
+    10. Testar o programa:
+            - Verificar se todas as funcionalidades estão funcionando corretamente.
+            - Realizar testes com diferentes opções e cenários.
+            - Garantir que o programa atende a todos os requisitos especificados.
+
+    11. Documentar o código:
+            - Adicionar comentários claros e explicativos no código-fonte.
+            - Documentar as funcionalidades e o uso do programa.
+
+    12. Realizar testes adicionais:
+            - Verificar se todas as funcionalidades estão funcionando corretamente.
+            - Realizar testes com diferentes opções e cenários.
+            - Garantir que o programa atende a todos os requisitos especificados.
+
+    13. Otimização e refatoração (se necessário):
+            - Identificar possíveis melhorias no código.
+            - Refatorar o código para melhorar sua legibilidade, eficiência e manutenibilidade.
+            
+    14. Preparar a entrega:
+            - Verificar se todas as funcionalidades estão implementadas corretamente.
+            - Certificar-se de que o código está bem organizado e documentado.
+            - Preparar qualquer documentação adicional exigida para a entrega do trabalho.
+
+    15. Realizar uma revisão final:
+            - Verificar se todas as etapas foram concluídas.
+            - Testar novamente o programa para garantir seu funcionamento adequado.
+            - Corrigir quaisquer erros ou problemas identificados.
+
+    16. Finalizar a entrega:
+            - Preparar o pacote de software completo para entrega.
+            - Incluir todas as documentações necessárias.
+            - Cumprir os prazos de entrega estabelecidos.

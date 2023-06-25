@@ -143,7 +143,5 @@ void remover_membros(Archiver *archiver, char *nome_archive, char **nomes_membro
         remove("temp_archive");
         return;
     }
-
-    printf("Membros removidos com sucesso do archive.\n");
     
 }

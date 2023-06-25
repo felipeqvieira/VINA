@@ -1,0 +1,52 @@
+                        Remover Membro
+
+    A função `remover_membro` é responsável por remover um membro específico de um arquivo `archive.vpp`. Vamos analisar suas características, utilidades e estruturas utilizadas:
+
+    - `nome_arquivo`: É o nome do arquivo `archive.vpp` onde o membro será removido.
+    - `nome_membro`: É o nome do membro a ser removido do arquivo.
+
+    A função realiza as seguintes operações:
+
+    1. Abre o arquivo `nome_arquivo` em modo de leitura e escrita binária usando `fopen`. Se ocorrer algum erro na abertura do arquivo, exibe uma mensagem de erro usando `perror` e retorna.
+
+    2. Declara uma variável `archiver` do tipo `Archiver` para armazenar a estrutura completa do arquivo.
+
+    3. Lê os dados da estrutura `Archiver` do arquivo usando `fread` e armazena-os na variável `archiver`.
+
+    4. Obtém um ponteiro para a estrutura `Archive` contida em `archiver` usando o operador de endereço `&`.
+
+    5. Localiza o índice do membro indicado para remoção, percorrendo os membros da estrutura `Archive`. A comparação é feita com base no nome do membro usando `strcmp`. Se o membro for encontrado, armazena o índice em `indice_membro`.
+
+    6. Verifica se o membro foi encontrado. Se o valor de `indice_membro` for -1, significa que o membro não foi encontrado no arquivo. Nesse caso, exibe uma mensagem de erro informando que o membro não foi encontrado, fecha o arquivo e retorna.
+
+    7. Libera a memória alocada para o membro a ser removido usando `free`. Em seguida, decrementa o número de membros na estrutura `Archive`.
+
+    8. Atualiza as informações do diretório do arquivo `archive` após a remoção do membro.
+
+    9. Desloca os membros restantes para preencher o espaço vazio deixado pela remoção do membro. Isso é feito usando um loop que percorre os membros a partir do índice do membro removido e copia os membros subsequentes para uma posição anterior.
+
+    10. Trunca o arquivo para remover o último membro, que agora está duplicado no final. Isso é feito usando `fseek` para posicionar o ponteiro de arquivo no início, `fwrite` para escrever a estrutura `Archiver` atualizada no arquivo, `fflush` para garantir que os dados sejam gravados no disco e `ftruncate` para ajustar o tamanho do arquivo de acordo com a nova quantidade de membros.
+
+    11. Fecha o arquivo.
+
+    12. Exibe uma mensagem informando que o membro foi removido com sucesso.
+
+    O processo de remoção do membro segue os seguintes passos:
+
+    1. Abre o arquivo `archive.vpp` para leitura e escrita.
+    2. Lê a estrutura `Archiver` do arquivo.
+    3. Localiza o índice do membro a ser removido.
+    4. Se o membro for encontrado, libera sua memória e decrementa o número de membros.
+    5. Desloca os membros restantes para preencher o espaço vazio deixado pela remoção.
+    6. Atualiza as informações do diretório do arquivo.
+    7. Trunca o arquivo para remover o último membro, que agora está duplicado no final.
+    8. Fecha o arquivo.
+    9. Exibe uma mensagem informando que o membro foi removido com sucesso.
+
+    Dessa forma, a função percorre os passos necessários para remover um membro específico do arquivo `archive.vpp`, atualizando as informações do diretório e garantindo que o arquivo seja ajustado corretamente após a remoção.
+
+    É importante notar que a função utiliza as estruturas `Archiver` e `Archive`, que contêm informações sobre o arquivo e os membros armazenados nele. A função também utiliza operações de leitura, escrita e manipulação de arquivos, como `fopen`, `fread`, `fwrite`, `fclose`, `fseek`, `fflush` e `ftruncate`, para realizar as operações necessárias no arquivo.
+
+    Além disso, a função faz uso de um loop para deslocar os membros restantes e manter a ordem correta após a remoção. Também são realizadas comparações de strings usando `strcmp` para localizar o membro a ser removido pelo seu nome.
+
+    Essa função é essencial para a funcionalidade de remoção de membros do arquivo `archive.vpp`, permitindo a atualização e manutenção do arquivo conforme os membros são adicionados ou removidos.

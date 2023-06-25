@@ -1,0 +1,23 @@
+                        Listar Conteúdo
+
+    A função `listar_conteudo` tem como objetivo listar o conteúdo de um arquivo `archive.vpp`, exibindo informações sobre os membros presentes na estrutura `Archive`. Vamos analisar suas características e estruturas:
+
+    - `nome_arquivo`: É o nome do arquivo a ser lido e listado.
+
+    A função realiza as seguintes operações:
+
+    1. Abre o arquivo `nome_arquivo` em modo de leitura binária usando `fopen`. Se ocorrer algum erro na abertura do arquivo, exibe uma mensagem de erro usando `perror` e retorna.
+
+    2. Declara uma variável `archiver` do tipo `Archiver` para armazenar a estrutura completa do arquivo.
+
+    3. Lê os dados da estrutura `Archiver` do arquivo usando `fread` e armazena-os na variável `archiver`.
+
+    4. Obtém um ponteiro para a estrutura `Archive` contida em `archiver` usando o operador de endereço `&`.
+
+    5. Exibe um cabeçalho indicando o nome do arquivo sendo listado.
+
+    6. Itera sobre os membros presentes na estrutura `Archive` e, para cada membro, imprime informações como nome, tamanho e propriedades usando `printf`.
+
+    7. Fecha o arquivo.
+
+    Essa função permite visualizar o conteúdo de um arquivo `archive.vpp`, exibindo informações sobre seus membros. Ela lê a estrutura `Archiver` do arquivo usando `fread` e, em seguida, percorre a estrutura `Archive` para exibir os detalhes de cada membro usando `printf`. Isso facilita a visualização dos dados armazenados no arquivo de forma organizada e legível.

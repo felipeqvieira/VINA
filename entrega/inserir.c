@@ -53,6 +53,8 @@ void inserir_membros(Archiver *archiver, char *nome_archive, char **nomes_arquiv
             deslocamento += archiver->archiveData.diretorio.membros[j].tamanho;
         }
 
+        novo_membro.localizacao = deslocamento;
+
         // Move o cursor para o início do conteúdo do membro
         fseek(arquivo_archive, deslocamento, SEEK_SET);
 
@@ -75,7 +77,7 @@ void inserir_membros(Archiver *archiver, char *nome_archive, char **nomes_arquiv
     }
 
     // Move o cursor para o início do diretório
-    fseek(arquivo_archive, sizeof(ArchiveData), SEEK_SET);
+    fseek(arquivo_archive, 0, SEEK_END);
 
     // Escreve o novo diretório no arquivo
     fwrite(&(archiver->archiveData.diretorio), sizeof(Diretorio), 1, arquivo_archive);

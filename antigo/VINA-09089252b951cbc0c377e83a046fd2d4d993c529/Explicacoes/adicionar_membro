@@ -1,0 +1,37 @@
+                    Adicionar Membro
+
+    A função `adicionar_membro` tem como objetivo adicionar um novo membro a um arquivo de archive. Vamos analisar as características e utilidade dos argumentos e das estruturas utilizadas:
+
+    - `void adicionar_membro(Archive* archive, const char* nome_membro, const char* nome_arquivo_destino)`: A função `adicionar_membro` recebe um ponteiro para `Archive` (que é uma estrutura que representa o arquivo de archive), uma string `nome_membro` (que é o nome do membro a ser adicionado) e uma string `nome_arquivo_destino` (que é o nome do arquivo de destino onde o membro será adicionado).
+
+    - `FILE* membro = fopen(nome_membro, "rb")`: A função `fopen` é usada para abrir o arquivo `nome_membro` em modo de leitura binária (`"rb"`). Ela retorna um ponteiro para `FILE`, que representa o arquivo aberto. Se ocorrer um erro na abertura do arquivo, a função retorna o valor `ERRO_NA_ABERTURA` (provavelmente definido anteriormente).
+
+    - `fseek(membro, 0, SEEK_END)`: A função `fseek` é usada para posicionar o indicador de posição do arquivo no final do arquivo `membro`. Isso é feito passando o deslocamento `0` e o modo `SEEK_END` como parâmetros.
+
+    - `long tamanho_arquivo = ftell(membro)`: A função `ftell` é usada para obter a posição atual do indicador de posição do arquivo `membro`. Neste caso, a posição atual é o final do arquivo. O valor retornado é atribuído à variável `tamanho_arquivo`, que armazenará o tamanho do arquivo.
+
+    - `Membro* novo_membro; inicializar_membro(&novo_membro, nome_membro)`: É criado um ponteiro para `Membro` chamado `novo_membro`. A função `inicializar_membro` é chamada passando o endereço de `novo_membro` e `nome_membro`. Isso cria e inicializa um novo membro com o nome especificado.
+
+    - `preencher_dados_membro(novo_membro, nome_membro)`: A função `preencher_dados_membro` é chamada para preencher os dados do membro recém-criado usando as informações do arquivo `nome_membro`.
+
+    - `FILE* arquivo_destino = fopen(nome_arquivo_destino, "ab")`: A função `fopen` é usada para abrir o arquivo de destino `nome_arquivo_destino` em modo de anexação binária (`"ab"`). Ela retorna um ponteiro para `FILE`, que representa o arquivo aberto. Se ocorrer um erro na abertura do arquivo, a função retorna o valor `ERRO_NA_ABERTURA`.
+
+    - `while ((bytes_lidos = fread(buffer, 1, BUFFER_SIZE, membro)) > 0)`: Um loop é executado para ler os dados do arquivo `membro` em blocos de tamanho `BUFFER_SIZE` e armazená-los no buffer.
+
+    - `fwrite(&buffer[i], tamanho_gravado, 1, arquivo_destino)`: A função `fwrite` é usada para escrever os dados do buffer no arquivo de destino. Os dados são gravados a partir da posição `i` no buffer com tamanho `tamanho_gravado` (que é no máximo 1024 bytes) e a quantidade de elementos gravados é 1.
+
+    - `archive->membros[archive->num_membros] = novo_membro;` e `archive->num_membros++`: O ponteiro `novo_membro` é adicionado ao array de membros do arquivo de archive (`archive->membros`) na posição `archive->num_membros` e o contador `archive->num_membros` é incrementado.
+
+    - `fclose(membro)` e `fclose(arquivo_destino)`: Os arquivos `membro` e `arquivo_destino` são fechados com o uso da função `fclose`.
+
+    Em resumo, a função `adicionar_membro` realiza as seguintes tarefas:
+    1. Abre o arquivo `nome_membro` para leitura binária.
+    2. Obtém o tamanho do arquivo e outras informações relevantes utilizando as funções `fseek` e `ftell`.
+    3. Cria e inicializa um novo membro usando a função `inicializar_membro`.
+    4. Preenche os dados do membro utilizando a função `preencher_dados_membro`.
+    5. Abre o arquivo de destino `nome_arquivo_destino` em modo de anexação binária.
+    6. Lê os dados do arquivo de membro e os grava no arquivo de destino em blocos de tamanho `BUFFER_SIZE`.
+    7. Adiciona o novo membro ao array de membros do arquivo de archive e atualiza o contador de membros.
+    8. Fecha os arquivos abertos.
+
+    Os argumentos `archive`, `nome_membro` e `nome_arquivo_destino` são necessários para fornecer as informações e executar as operações adequadas de adição do membro ao arquivo de archive.
