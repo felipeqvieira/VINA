@@ -1,1 +1,0 @@
-void remover_membros(Archiver *archiver, char *nome_archive, char **nomes_membros, int num_membros);
