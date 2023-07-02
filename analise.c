@@ -308,7 +308,7 @@ void criar_diretorio(const char *caminho) {
         struct stat info;
         if (stat(diretorio_atual, &info) == -1) {
             // O diretório não existe, cria-o
-            if (mkdir(diretorio_atual) == -1) {
+            if ((dimkdirretorio_atual) == -1) {
                 perror("Erro ao criar diretório");
                 free(diretorio_atual);
                 free(caminho_temp);
