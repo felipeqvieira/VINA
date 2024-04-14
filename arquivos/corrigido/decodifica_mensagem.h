@@ -1,1 +1,0 @@
-int decodifica (FILE *arq, vetor_lista *V, FILE *destino);
