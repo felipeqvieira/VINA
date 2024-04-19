@@ -3,6 +3,10 @@
 #include "inserir.h"
 #include "listar.h"
 #include "remover.h"
+#include "ajuda.h"
+#include "mover.h"
+#include "extrair.h"
+#include "substituir.h"
 
 int main(int argc, char *argv[]) {
     // Verificar se foram fornecidos argumentos suficientes
@@ -33,8 +37,14 @@ int main(int argc, char *argv[]) {
         listar_membros(archiver);
     } else if (strcmp(opcao, "-r") == 0) {
         remover_membros(archiver, membros, num_membros);
-   // } else if (strcmp(opcao, "-x") == 0) {
-       // extrair_membros(archiver, membros, num_membros);
+    } else if (strcmp(opcao, "-x") == 0) {
+        extrair_membro(archiver, membros, num_membros);
+    } else if (strcmp(opcao, "-h") == 0) {
+        exibir_ajuda();
+    } else if (strcmp(opcao, "-m") == 0) {
+        mover_membro(archiver, membros, num_membros);
+    } else if (strcmp(opcao, "-a") == 0) {
+        substituir_membro(archiver, membros, num_membros);
     } else {
         printf("Opção inválida.\n");
     }

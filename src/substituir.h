@@ -1,0 +1,1 @@
+void substituir_membro(Archiver *archiver, char **nomes_arquivos, int num_arquivos);
