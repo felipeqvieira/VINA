@@ -1,79 +1,71 @@
-# modelo-README.md
-Modelo (template) de README para utilizar nas documentações dos seus projetos no GitHub. Deixe sua ⭐ se curtiu o template, para ficar salvo e utilizar depois.
+# Projeto VINA
 
-# Título/Nome do projeto
+O objetivo desse repositório é implementar o programa VINA, que consiste de um arquivador básico (archiver), isto é, um programa que salva em sequência uma coleção de arquivos (denominados membros) dentro de outro arquivo (denominado archive) cuja estrutura permite recuperar os arquivos originais individualmente.
 
-Descreva brevemente o seu projeto. Aqui você pode utilizar texto e também imagens/diagramas.
-
-* O [Mermaid](https://mermaid.live/edit#pako:eNpVkE1uwjAQha9izapIZFGWWVSCBFZUVCq7mMXInjSW_Fdji6Ikp2HRg3CxmmRDZzV633uj0etBOElQQqvdRXQYIjvW3LI862bttRJ4_73fHHs9saJ4GwJ9JzrHgW1enulqMWc2DxOr-u0PGa_dOKvVFD1YGljd7NFH50_P5HhxA9s26qNzlv6TLlBO7ZoWyxYLgYFVGCYLLMFQMKhk_r5_KBxiR4Y4lHmV1GLSkQO3Y7Ziiu7zagWUMSRaQvISI9UKvwIayLf1OaskVXThfW5kKmb8AyAeX3o) é uma opção bem legal para diagramas e você consegue utilizar diretamente no README.md:
-
-[![](https://mermaid.ink/img/pako:eNpVkE1uwjAQha9izapIZFGWWVSCBFZUVCq7mMXInjSW_Fdji6Ikp2HRg3CxmmRDZzV633uj0etBOElQQqvdRXQYIjvW3LI862bttRJ4_73fHHs9saJ4GwJ9JzrHgW1enulqMWc2DxOr-u0PGa_dOKvVFD1YGljd7NFH50_P5HhxA9s26qNzlv6TLlBO7ZoWyxYLgYFVGCYLLMFQMKhk_r5_KBxiR4Y4lHmV1GLSkQO3Y7Ziiu7zagWUMSRaQvISI9UKvwIayLf1OaskVXThfW5kKmb8AyAeX3o?type=png)](https://mermaid.live/edit#pako:eNpVkE1uwjAQha9izapIZFGWWVSCBFZUVCq7mMXInjSW_Fdji6Ikp2HRg3CxmmRDZzV633uj0etBOElQQqvdRXQYIjvW3LI862bttRJ4_73fHHs9saJ4GwJ9JzrHgW1enulqMWc2DxOr-u0PGa_dOKvVFD1YGljd7NFH50_P5HhxA9s26qNzlv6TLlBO7ZoWyxYLgYFVGCYLLMFQMKhk_r5_KBxiR4Y4lHmV1GLSkQO3Y7Ziiu7zagWUMSRaQvISI9UKvwIayLf1OaskVXThfW5kKmb8AyAeX3o)
-
-- No site, vá no campo: Actions > Copy Markdown. Copie o link e cole no seu arquivo README.md e o diagrama estará lá.
-
+Os programas tar, zip, rar e arj são arquivadores populares. Além de arquivar arquivos, a maioria deles também comprime dados dos mesmos, para ocupar menos espaço de armazenamento. Para simplificar, o arquivador VINA não comprime os arquivos, apenas os armazena.
 
 ### Tecnologias Utilizadas
 
-Liste as tecnologias (linguagens, ferramentas, bibliotecas) que você utilizou para elaborar o projeto. Essa parte é importante para quando um recrutador (que não tem conhecimento de programação) acessar o seu projeto, ele vai saber só olhando a documentação quais tecnologias você já conhece!
-
-Exemplo:
-* [Golang](https://github.com/golang/go)
-* [Docker](https://www.docker.com/)
-* [MySQL](https://www.mysql.com/)
-
-## Dependências e Versões Necessárias
-
-Liste as dependências necessárias para rodar o projeto e as versões que você utilizou.
-
-* Docker - Versão: X.X
+* C
 
 ## Como rodar o projeto ✅
 
-Descreva o passo a passo necessário para rodar sua aplicação. Lembre-se: a pessoa nunca rodou seu projeto. Não tenha medo de detalhar o máximo possível. Isso é necessário!
-
-Uma boa forma de descrever o passo a passo é:
+Primeiramente, devemos compilar os arquivos a partir do seguinte comando:
 
 ```
-Comando 1
+make
 ```
 
-Depois, rode o seguinte comando:
+Depois disso, o pacote de software gera o executável vina, que deve ser executado da seguinte forma:
 
 ```
-Comando 2
+vina <opção> <archive> [membro1 membro2 ...]
+```
+Onde a opção pode ser:
+
+* -i: Insere/acrescenta um ou mais membros ao archive. Se um membro já está no archive, o novo não é inserido. Novos membros são inseridos respeitando a ordem da linha de comando, ao final do archive;
+
+* -a: Mesmo comportamento da opção -i, mas se o arquivo já existe, então a substituição ocorre apenas caso o parâmetro seja mais recente que o arquivado;
+
+* -x: extrai os membros indicados de archive. Se os membros não forem indicados, todos devem ser extraídos. A extração consiste em ler o membro de archive e criar um arquivo correspondente, com conteúdo idêntico, em disco;
+
+* -r: remove os membros indicados de archive;
+
+* -c: lista o conteúdo de archive em ordem, incluindo as propriedades de cada membro (nome, UID, permissões, tamanho e data de modificação) e sua ordem no arquivo;
+
+* -h: Imprime uma pequena mensagem de ajuda com as opções disponíveis e encerra.
+
+Exemplos de comandos:
+
+```
+//inclui os arquivos "arq.txt", "foto.jpg" e "despesas.ods" em backup.vr
+vina -i backup.vr arq.txt foto.jpg despesas.ods
+
+//atualiza "despesas.ods" em backup.vr, se o arquivo externo for mais recente
+vina -a backup.vr despesas.ods
+
+//extrai o arquivo arq.txt de backup.vr
+vina -x backup.vr arq.txt
+
+//extrai todos os arquivos de backup.vr
+vina -x backup.vr
 ```
 
-Deixe claro como a pessoa pode confirmar que a aplicação está rodando da forma correta. Pode ser com prints ou a mensagem que ela deve esperar.
-
-## Como rodar os testes
-
-Explique como rodar os testes da aplicação. Exemplo de um comando usando Makefile para rodar os testes:
+Você sempre pode confirmar as mudanças realizadas no archive com a opção -c.
 
 ```
-make test
+//lista os arquivos dentro do archive
+vina -c backup.vr
 ```
 
 ## 📌 (Título) - Informações importantes sobre a aplicação (exemplo) 📌
 
-Esse é o local para você preencher com outras informações que possam ser importantes para a aplicação. Coloquei um exemplo de título, mas você deve preencher de acordo com a necessidade do projeto. Pode ser que não seja necessário.
+* O início ou final do archive (.vr) tem uma área de diretório. Todas as informações sobre os membros necessárias para a manipulação do archive, estão armazenadas única e exclusivamente na área de diretório. A parte restante contém apenas dados dos membros.
 
-Um bom exemplo: se você estiver construindo uma API, liste as rotas da aplicação e quais serão os seus retornos. Isso facilita para quem vai consumir a API.
+* Para cada membro, são armazenadas as seguintes informações: nome, UID (user ID), permissões, tamanho, data de modificação, ordem no arquivo e localização.
 
-
-## ⚠️ Problemas enfrentados
-
-Liste os problemas que você enfrentou construindo a aplicação e como você resolveu cada um deles. Você que desenvolveu o projeto é a pessoa que mais conhece/entende os possíveis problemas que uma pessoa pode enfrentar rodando a aplicação. Compartilhe esse conhecimento e facilite a vida da pessoa descrevendo-os.
-
-Exemplo:
-
-### Problema 1:
-Descrição do problema
-* Como solucionar: explicar a solução.
-
-### Problema 2:
-Descrição do problema
-* Como solucionar: explicar a solução.
+* A ordem de um membro no arquivo é dada pela ordem de inserção.
 
 ## ⏭️ Próximos passos
 
-Descreva se você pretende, pensou ou gostaria de elaborar uma nova feature para o seu projeto definindo os próximos passos.
+Gostaria de implementar uma forma de alterar a ordem dos membros dentro do archive. Entretanto, ainda não vi uma certa utilidade nessa mudança.
