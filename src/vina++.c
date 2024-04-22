@@ -9,6 +9,7 @@
 #include "substituir.h"
 
 int main(int argc, char *argv[]) {
+    
     // Verificar se foram fornecidos argumentos suficientes
     if (argc < 3) {
         printf("Uso: vina++ <opção> <archive> [membro1 membro2 ...]\n");
@@ -31,23 +32,21 @@ int main(int argc, char *argv[]) {
     int num_membros = contar_membros(membros);
 
     // Encaminhar para a função apropriada de acordo com a opção
-    if (strcmp(opcao, "-i") == 0) {
+    if (strcmp(opcao, "-i") == 0) 
         inserir_membros(archiver, membros, num_membros);
-    }else if (strcmp(opcao, "-c") == 0) {
+    else if (strcmp(opcao, "-c") == 0) 
         listar_membros(archiver);
-    } else if (strcmp(opcao, "-r") == 0) {
+    else if (strcmp(opcao, "-r") == 0) 
         remover_membros(archiver, membros, num_membros);
-    } else if (strcmp(opcao, "-x") == 0) {
+    else if (strcmp(opcao, "-x") == 0) 
         extrair_membro(archiver, membros, num_membros);
-    } else if (strcmp(opcao, "-h") == 0) {
+    else if (strcmp(opcao, "-h") == 0) 
         exibir_ajuda();
-    } else if (strcmp(opcao, "-m") == 0) {
-        mover_membro(archiver, membros, num_membros);
-    } else if (strcmp(opcao, "-a") == 0) {
+    else if (strcmp(opcao, "-a") == 0) 
         substituir_membro(archiver, membros, num_membros);
-    } else {
+    else 
         printf("Opção inválida.\n");
-    }
+    
 
     free(archiver);
 
