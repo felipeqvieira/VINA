@@ -58,7 +58,7 @@ Você sempre pode confirmar as mudanças realizadas no archive com a opção -c.
 vina -c backup.vr
 ```
 
-## 📌 (Título) - Informações importantes sobre a aplicação (exemplo) 📌
+## 📌 Informações importantes sobre a aplicação 📌
 
 * O início ou final do archive (.vr) tem uma área de diretório. Todas as informações sobre os membros necessárias para a manipulação do archive, estão armazenadas única e exclusivamente na área de diretório. A parte restante contém apenas dados dos membros.
 
